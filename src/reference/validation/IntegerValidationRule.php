@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
@@ -32,8 +30,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -46,8 +42,8 @@
  */
 class IntegerValidationRule extends BaseValidationRule
 {
-
     private $_minValue;
+
     private $_maxValue;
 
     /**
@@ -71,7 +67,7 @@ class IntegerValidationRule extends BaseValidationRule
         } else {
             $this->_minValue = (int) $minValue;
         }
-        
+
         if ($maxValue === null || ! is_numeric($maxValue)) {
             $this->_maxValue = PHP_INT_MAX;
         } else {
@@ -100,6 +96,7 @@ class IntegerValidationRule extends BaseValidationRule
         if (! is_string($context)) {
             $context = 'NoContextSupplied'; // TODO Invalid Arg Exception?
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -107,15 +104,17 @@ class IntegerValidationRule extends BaseValidationRule
                 $context
             );
         }
+
         if ($this->_minValue > $this->_maxValue) {
             throw new RuntimeException(
                 'Validation misconfiguration - $_minValue should not be ' .
                 'greater than $_maxValue!'
             );
         }
+
         if ($input === null || $input == '') {
             if ($this->allowNull) {
-                return null;
+                return;
             }
             throw new ValidationException(
                 "{$context}: Input required",
@@ -126,6 +125,7 @@ class IntegerValidationRule extends BaseValidationRule
 
         // strict canonicalization
         $canonical = null;
+
         try {
             $canonical = $this->encoder->canonicalize($input, true);
         } catch (EncodingException $e) {
@@ -147,6 +147,7 @@ class IntegerValidationRule extends BaseValidationRule
                 );
             }
             $i = $canonical;
+
             if ($i != intval($i)) {
                 throw new ValidationException(
                     'Invalid integer input: context=' . $context,
@@ -155,6 +156,7 @@ class IntegerValidationRule extends BaseValidationRule
                 );
             }
             $i = (int) $i;
+
             if ($i < $this->_minValue) {
                 throw new ValidationException(
                     'Invalid integer input must not be less than ' . $this->_minValue,
@@ -163,6 +165,7 @@ class IntegerValidationRule extends BaseValidationRule
                     $context
                 );
             }
+
             if ($i > $this->_maxValue) {
                 throw new ValidationException(
                     'Invalid integer input must not be greater than ' .

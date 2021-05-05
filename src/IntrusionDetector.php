@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -35,8 +33,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -49,7 +45,6 @@
  */
 interface IntrusionDetector
 {
-
     /**
      * Adds an exception to the IntrusionDetector.
      *

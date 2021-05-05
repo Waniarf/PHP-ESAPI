@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Laura Bell <laura.d.bell@gmail.com>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -36,8 +34,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Laura Bell <laura.d.bell@gmail.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -51,7 +47,6 @@
  */
 interface Auditor
 {
-
     /*
      * The Logger interface defines 4 event types: SECURITY, USABILITY,
      * PERFORMANCE and FUNCTIONALITY.  The reference implementation of ESAPI
@@ -98,13 +93,13 @@ interface Auditor
      * FATAL indicates that only FATAL messages should be logged.
      * This level is initialized to 1000.
      */
-    const FATAL   = 1000;
+    const FATAL = 1000;
 
     /**
      * ERROR indicates that ERROR messages and above should be logged.
      * This level is initialized to 800.
      */
-    const ERROR   = 800;
+    const ERROR = 800;
 
     /**
      * WARNING indicates that WARNING messages and above should be logged.
@@ -116,25 +111,25 @@ interface Auditor
      * INFO indicates that INFO messages and above should be logged.
      * This level is initialized to 400.
      */
-    const INFO    = 400;
+    const INFO = 400;
 
     /**
      * DEBUG indicates that DEBUG messages and above should be logged.
      * This level is initialized to 200.
      */
-    const DEBUG   = 200;
+    const DEBUG = 200;
 
     /**
      * TRACE indicates that TRACE messages and above should be logged.
      * This level is initialized to 100.
      */
-    const TRACE   = 100;
+    const TRACE = 100;
 
     /**
      * ALL indicates that all messages should be logged.
      * This level is initialized to 0.
      */
-    const ALL   = 0;
+    const ALL = 0;
 
     /**
      * Dynamically set the logging severity level. All events of this level and

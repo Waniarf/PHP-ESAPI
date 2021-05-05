@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
@@ -35,8 +33,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
@@ -49,7 +45,8 @@
 class Event
 {
     private $_key;
-    private $_times = array();
+
+    private $_times = [];
 
     /**
      * @var int The number of times this event occurred for a given user.
@@ -60,7 +57,7 @@ class Event
      * Constructor stores the supplied key as the event name.
      *
      * @param string $key A name by which the event is known e.g.
-     *                   'IntegrityException'.
+     *                    'IntegrityException'.
      */
     public function __construct($key)
     {
@@ -85,6 +82,7 @@ class Event
     public function increment($count, $interval)
     {
         $now = null;
+
         if (function_exists('microtime')) {
             $now = microtime(true);
             $interval = (float) $interval;
@@ -102,16 +100,18 @@ class Event
 
         if (sizeof($this->_times) == $count) {
             $past = reset($this->_times);
+
             if ($past === false) {
                 // this should not happen because events are validated in
                 // SecurityConfiguration...
                 $past = $now;
             }
             $present = $now;
+
             if ($present - $past < $interval) {
                 throw new IntrusionException(
-                    "Threshold exceeded",
-                    "Exceeded threshold for " . $this->_key
+                    'Threshold exceeded',
+                    'Exceeded threshold for ' . $this->_key
                 );
             }
         }

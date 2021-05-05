@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -37,8 +35,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -50,7 +46,6 @@
  */
 interface AccessReferenceMap
 {
-
     /**
      * Get an iterator through the direct object references. No guarantee is made as
      * to the order of items returned.

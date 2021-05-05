@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
@@ -33,8 +31,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
@@ -47,7 +43,6 @@
  */
 class DateValidationRule extends BaseValidationRule
 {
-
     private $_format;
 
     /**
@@ -108,6 +103,7 @@ class DateValidationRule extends BaseValidationRule
         if (! is_string($context)) {
             $context = 'NoContextSupplied'; // TODO Invalid Arg Exception?
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -118,7 +114,7 @@ class DateValidationRule extends BaseValidationRule
 
         if ($input === null || $input == '') {
             if ($this->allowNull) {
-                return null;
+                return;
             }
             throw new ValidationException(
                 "{$context}: Input required",
@@ -129,6 +125,7 @@ class DateValidationRule extends BaseValidationRule
 
         // strict canonicalization
         $canonical = null;
+
         try {
             $canonical = $this->encoder->canonicalize($input, true);
         } catch (EncodingException $e) {
@@ -142,9 +139,11 @@ class DateValidationRule extends BaseValidationRule
 
         // try to create a DateTime object from the canonical input
         $date = false;
+
         if ((@strtotime($canonical)) !== false) {
             $date = date_create($canonical);
         }
+
         if ($date === false) {
             throw new ValidationException(
                 "{$context} - Invalid date must follow the {$this->_format} format",
@@ -156,6 +155,7 @@ class DateValidationRule extends BaseValidationRule
         // the DateTime object, formatted with $format, must equal the canonical
         // input
         $formatted = $date->format($this->_format);
+
         if ($formatted !== $canonical) {
             throw new ValidationException(
                 "{$context} - Invalid date must follow the {$this->_format} format",

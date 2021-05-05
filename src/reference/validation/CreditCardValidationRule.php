@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,8 +41,8 @@
  */
 class CreditCardValidationRule extends BaseValidationRule
 {
-
     private $_ccrule = null;
+
     const CREDIT_CARD_VALIDATOR_KEY = 'CreditCard';
 
     /**
@@ -117,6 +113,7 @@ class CreditCardValidationRule extends BaseValidationRule
         if (! is_string($context)) {
             $context = 'NoContextSupplied'; // TODO Invalid Arg Exception?
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -124,9 +121,10 @@ class CreditCardValidationRule extends BaseValidationRule
                 $context
             );
         }
+
         if ($input === null || $input == '') {
             if ($this->allowNull) {
-                return null;
+                return;
             }
             throw new ValidationException(
                 "{$context}: Input Credit Card Number required",
@@ -144,9 +142,11 @@ class CreditCardValidationRule extends BaseValidationRule
         $len = mb_strlen($digitsOnly, $charEnc);
         $odd = ! $len % 2;
         $sum = 0;
+
         for ($i = $len - 1; $i >= 0; $i--) {
             $n = mb_substr($digitsOnly, $i, 1, $charEnc);
             $odd = ! $odd;
+
             if ($odd) {
                 $sum += $n;
             } else {
@@ -154,10 +154,11 @@ class CreditCardValidationRule extends BaseValidationRule
                 $sum += $x > 9 ? $x - 9 : $x;
             }
         }
+
         if (($sum % 10) != 0) {
             throw new ValidationException(
                 "{$context}: Invalid Credit Card Number",
-                "Input Credit Card Number contains errors - check digit failure:" .
+                'Input Credit Card Number contains errors - check digit failure:' .
                 " context={$context}",
                 $context
             );

@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
@@ -33,8 +31,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
@@ -49,12 +45,14 @@
  */
 class DefaultValidator implements Validator
 {
-
     private $_rules;
+
     private $_auditor;
+
     private $_encoder;
+
     private $_fileValidator;
-     
+
     const MAX_PARAMETER_NAME_LENGTH = 100;
     const MAX_PARAMETER_VALUE_LENGTH = 65535;
 
@@ -65,16 +63,15 @@ class DefaultValidator implements Validator
      */
     public function __construct()
     {
-        $this->_auditor = ESAPI::getAuditor('DefaultValidator');
         $this->_encoder = ESAPI::getEncoder();
-        $this->_fileValidator = new DefaultEncoder(array(
-        	new HTMLEntityCodec(),
-            new PercentCodec()
-        ));
+        $this->_fileValidator = new DefaultEncoder([
+            new HTMLEntityCodec(),
+            new PercentCodec(),
+        ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidInput($context, $input, $type, $maxLength, $allowNull)
     {
@@ -97,7 +94,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -107,6 +104,7 @@ class DefaultValidator implements Validator
 
         $config = ESAPI::getSecurityConfiguration();
         $pattern = $config->getValidationPattern($type);
+
         if ($pattern !== false) {
             $validationRule->addWhitelistPattern($pattern);
         } else {
@@ -117,12 +115,10 @@ class DefaultValidator implements Validator
         $validationRule->setAllowNull($allowNull);
 
         $validationRule->assertValid($context, $input);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidDate($context, $input, $format, $allowNull)
     {
@@ -144,7 +140,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -154,12 +150,10 @@ class DefaultValidator implements Validator
         $dvr->setAllowNull($allowNull);
 
         $dvr->assertValid($context, $input);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidHTML($context, $input, $maxLength, $allowNull)
     {
@@ -181,7 +175,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -192,12 +186,10 @@ class DefaultValidator implements Validator
         $hvr->setAllowNull($allowNull);
 
         $hvr->assertValid($context, $input);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidCreditCard($context, $input, $allowNull)
     {
@@ -218,7 +210,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -228,12 +220,10 @@ class DefaultValidator implements Validator
         $ccvr->setAllowNull($allowNull);
 
         $ccvr->assertValid($context, $input);
-         
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidDirectoryPath($context, $input, $allowNull)
     {
@@ -254,7 +244,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -297,7 +287,7 @@ class DefaultValidator implements Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidNumber($context, $input, $minValue, $maxValue, $allowNull)
     {
@@ -320,7 +310,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -330,12 +320,10 @@ class DefaultValidator implements Validator
         $nvr->setAllowNull($allowNull);
 
         $nvr->assertValid($context, $input);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidInteger($context, $input, $minValue, $maxValue, $allowNull)
     {
@@ -358,7 +346,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -368,12 +356,10 @@ class DefaultValidator implements Validator
         $nvr->setAllowNull($allowNull);
 
         $nvr->assertValid($context, $input);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidDouble($context, $input, $minValue, $maxValue, $allowNull)
     {
@@ -396,19 +382,17 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
     private function _assertValidDouble($context, $input, $minValue, $maxValue, $allowNull)
     {
         $this->_assertValidNumber($context, $input, $minValue, $maxValue, $allowNull);
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidFileContent($context, $input, $maxBytes, $allowNull)
     {
@@ -430,7 +414,7 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -439,6 +423,7 @@ class DefaultValidator implements Validator
         if (! is_string($context)) {
             $context = 'Validate File Content';
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -459,7 +444,7 @@ class DefaultValidator implements Validator
 
         if ($input === null || $input == '') {
             if ($this->allowNull) {
-                return null;
+                return;
             }
             throw new ValidationException(
                 "{$context}: Input required",
@@ -483,7 +468,7 @@ class DefaultValidator implements Validator
                 $context
             );
         }
-         
+
         if ($maxBytes !== null && $inputLen > $maxBytes) {
             throw new ValidationException(
                 "{$context}: Invalid file content. Size must not exceed " .
@@ -493,12 +478,10 @@ class DefaultValidator implements Validator
                 $context
             );
         }
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidListItem($context, $input, $list)
     {
@@ -519,7 +502,7 @@ class DefaultValidator implements Validator
      * @param array  $list    Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
@@ -529,6 +512,7 @@ class DefaultValidator implements Validator
         if (! is_string($context)) {
             $context = 'ValidListItem';
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -536,6 +520,7 @@ class DefaultValidator implements Validator
                 $context
             );
         }
+
         if (! is_array($list)) {
             throw new RuntimeException(
                 'Validation misconfiguration - assertValidListItem expected' .
@@ -545,6 +530,7 @@ class DefaultValidator implements Validator
 
         // strict canonicalization
         $canonical = null;
+
         try {
             $canonical = $this->_encoder->canonicalize($input, true);
         } catch (EncodingException $e) {
@@ -564,12 +550,10 @@ class DefaultValidator implements Validator
                 $context
             );
         }
-
-        return null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidPrintable($context, $input, $maxLength, $allowNull)
     {
@@ -591,22 +575,20 @@ class DefaultValidator implements Validator
      * @param bool   $allowNULL Please see corresponding isValidXX description.
      *
      * @throws ValidationException thrown if input is invalid.
-     * @throws IntrusionException thrown if intrusion is detected.
+     * @throws IntrusionException  thrown if intrusion is detected.
      *
      * @return does not return a value.
      */
     private function _assertValidPrintable($context, $input, $maxLength, $allowNull)
     {
         $this->_assertValidInput($context, $input, 'PrintableASCII', $maxLength, $allowNull);
-        
-        return null;
     }
-  
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isValidRedirectLocation($context, $input, $allowNull)
     {
-        return $this->isValidInput($context, $input, "Redirect", 512, $allowNull);
+        return $this->isValidInput($context, $input, 'Redirect', 512, $allowNull);
     }
 }

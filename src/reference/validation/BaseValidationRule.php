@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,9 +41,10 @@
  */
 abstract class BaseValidationRule implements ValidationRule
 {
-
     protected $typeName;
+
     protected $encoder;
+
     protected $allowNull = false;
 
     /**
@@ -184,6 +181,7 @@ abstract class BaseValidationRule implements ValidationRule
     public function getSafe($context, $input)
     {
         $safe = null;
+
         try {
             $safe = $this->getValid($context, $input);
         } catch (ValidationException$e) {
@@ -230,10 +228,12 @@ abstract class BaseValidationRule implements ValidationRule
         if (! is_string($input) || $input == '') {
             $input = '';
         }
+
         if (is_string($whitelist)) {
             $charEnc = Codec::detectEncoding($whitelist);
             $limit = mb_strlen($whitelist, $charEnc);
-            $ary = array();
+            $ary = [];
+
             for ($i = 0; $i < $limit; $i++) {
                 $ary[] = mb_substr($whitelist, $i, 1, $charEnc);
             }
@@ -244,15 +244,19 @@ abstract class BaseValidationRule implements ValidationRule
         $initialCharEnc = Codec::detectEncoding($input);
         $_4ByteCharacterString = Codec::normalizeEncoding($input);
         $limit = mb_strlen($_4ByteCharacterString, 'UTF-32');
+
         for ($i = 0; $i < $limit; $i++) {
             $c = mb_substr($_4ByteCharacterString, $i, 1, 'UTF-32');
+
             if (Codec::containsCharacter($c, $whitelist)) {
                 $filtered .= $c;
             }
         }
+
         if ($filtered != '') {
             $filtered = mb_convert_encoding($filtered, $initialCharEnc, 'UTF-32');
         }
+
         if (! is_string($filtered)) {
             $filtered = '';
         }

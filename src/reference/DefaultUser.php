@@ -17,20 +17,16 @@
  * @since 1.4
  *
  * @version 1.07
- *
- * @package ESAPI_Reference
  */
 
 //FIXME: Cleanup to be done, as suggested by Mike
 
-define("MAX_ROLE_LENGTH", 250);
+define('MAX_ROLE_LENGTH', 250);
 
 /**
  * Reference Implementation of the DefaultUser interface.
  *
  * @category  OWASP
- *
- * @package   ESAPI_Reference
  *
  * @author    Bipin Upadhyay <http://projectbee.org/blog/contact/>
  * @copyright 2009-2010 The OWASP Foundation
@@ -42,35 +38,43 @@ define("MAX_ROLE_LENGTH", 250);
  */
 class DefaultUser implements User
 {
-
     //Configs
     public $allowedLoginAttempts = 3;
+
     public $sessionTimeout = 3600; #one hour
-    public $sessionAbsoluteTimeout = 7200; #2 hours
+
+    public $sessionAbsoluteTimeout = 7200;
+
+    #2 hours
     //TODO: load these from config
     private $_username;
+
     private $_password;
+
     private $_uid;
-    private $_userInfo = array();
-    private $_PathToUsersFiles = "../../test/testresources/users.txt";
+
+    private $_userInfo = [];
+
+    private $_PathToUsersFiles = '../../test/testresources/users.txt';
 
     private static $IDLE_TIMEOUT_LENGTH = null;
+
     private static $ABSOLUTE_TIMEOUT_LENGTH = null;
 
     /** This user's account id. */
     private $_accountId = 0;
 
     /** This user's account name. */
-    private $_accountName = "";
+    private $_accountName = '';
 
     /** This user's screen name (account name alias). */
-    private $_screenName = "";
+    private $_screenName = '';
 
     /** This user's CSRF token. */
-    private $_csrfToken = "";
+    private $_csrfToken = '';
 
     /** This user's assigned roles. */
-    private $_roles = array();
+    private $_roles = [];
 
     /** Whether this user's account is locked. */
     private $_locked = false;
@@ -97,7 +101,7 @@ class DefaultUser implements User
     //	private $expirationTime = new Date(Long.MAX_VALUE);
 
     /** The session's this user is associated with */
-    private $_sessions = array();
+    private $_sessions = [];
 
     /* A flag to indicate that the password must be changed before the account can be used. */
     // private boolean requiresPasswordChange = true;
@@ -117,6 +121,7 @@ class DefaultUser implements User
 
         do {
             $id = ESAPI::getRandomizer()->getRandomLong();
+
             if (ESAPI::getAuthenticator()->getUserById($id) == null && $id != 0) {
                 $this->setAccountID($id);
             }
@@ -138,16 +143,16 @@ class DefaultUser implements User
     public function hashPassword($password)
     {
         //TODO: code this
-        return "";
+        return '';
     }
-    
+
     /**
      * This array holds the keys for users fields in order and is used in parseUserInfo().
      *
      * @var array
      */
-    private $UserInfoFields = array("accountName" , "hashedPassword" , "roles" , "locked" , "enabled" , "rememberToken" , "csrfToken" , "oldPasswordHashes" , "lastPasswordChangeTime" , "lastLoginTime" , "lastFailedLoginTime" , "expirationTime" , "failedLoginCount");
-    
+    private $UserInfoFields = ['accountName', 'hashedPassword', 'roles', 'locked', 'enabled', 'rememberToken', 'csrfToken', 'oldPasswordHashes', 'lastPasswordChangeTime', 'lastLoginTime', 'lastFailedLoginTime', 'expirationTime', 'failedLoginCount'];
+
     private function setUserInfo($field, $value)
     {
         $this->_userInfo[$field] = $value;
@@ -156,7 +161,7 @@ class DefaultUser implements User
     private function getUserInfo($field)
     {
         if (! array_key_exists($field, $this->_userInfo)) {
-            return null;
+            return;
         }
 
         return $this->_userInfo[$field];
@@ -164,9 +169,10 @@ class DefaultUser implements User
 
     private function parseUserInfo($data)
     {
-        $data = explode(" | ", $data);
+        $data = explode(' | ', $data);
         $n = 0;
-        $this->_userInfo = array();
+        $this->_userInfo = [];
+
         foreach ($data as $D) {
             $this->_userInfo[$this->_userInfoFields[$n ++]] = $D;
         }
@@ -175,12 +181,14 @@ class DefaultUser implements User
     private function readUserInfo()
     {
         $Compare = $this->_username;
-        $fp = fopen(__DIR__ . "/" . $this->_PathToUsersFiles, "r");
+        $fp = fopen(__DIR__ . '/' . $this->_PathToUsersFiles, 'r');
+
         if (! $fp) {
-            throw new Exception("Can not open the users.txt file!");
+            throw new Exception('Can not open the users.txt file!');
         }
         while (! feof($fp)) {
             $Line = fgets($fp);
+
             if (substr($Line, 0, strlen($Compare)) == $Compare) {
                 $Data = $Line;
                 $this->parseUserInfo($Data);
@@ -193,26 +201,30 @@ class DefaultUser implements User
     private function writeUserInfo()
     {
         $Compare = $this->_username;
-        $fp = fopen(__DIR__ . "/" . $this->_PathToUsersFiles, "r");
+        $fp = fopen(__DIR__ . '/' . $this->_PathToUsersFiles, 'r');
+
         if (! $fp) {
-            throw new Exception("Can not open the users.txt file!");
+            throw new Exception('Can not open the users.txt file!');
         }
-        $Data = "";
+        $Data = '';
         while (! feof($fp)) {
             $Line = fgets($fp);
             $Line = trim($Line);
-            if (strlen($Line) > strlen($Compare) and substr($Line, 0, strlen($Compare)) != $Compare) {
+
+            if (strlen($Line) > strlen($Compare) && substr($Line, 0, strlen($Compare)) != $Compare) {
                 $Data .= $Line . "\n";
             }
         }
         fclose($fp);
-        $fp = fopen(__DIR__ . "/" . $this->_PathToUsersFiles, "w+");
+        $fp = fopen(__DIR__ . '/' . $this->_PathToUsersFiles, 'w+');
+
         if (! $fp) {
-            throw new Exception("Can not open the users.txt file for writing!!");
+            throw new Exception('Can not open the users.txt file for writing!!');
         }
         fwrite($fp, $Data);
+
         if ($this->_userInfo) {
-            fwrite($fp, implode(" | ", $this->_userInfo));
+            fwrite($fp, implode(' | ', $this->_userInfo));
         }
         fclose($fp);
     }
@@ -224,7 +236,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLocale()
     {
@@ -233,9 +245,9 @@ class DefaultUser implements User
             'Method "' . __METHOD__ . '" not implemented'
         );
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setLocale(Locale $locale)
     {
@@ -244,32 +256,33 @@ class DefaultUser implements User
             'Method "' . __METHOD__ . '" not implemented'
         );
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addRole($role)
     {
         $roleName = strtolower($role);
+
         if (false/*ESAPI::getValidator()->isValidInput("addRole", $roleName, "RoleName", MAX_ROLE_LENGTH, false) */) {
             //TODO: Verify if this is correct
             $this->_roles[] = $roleName;
-            ESAPI::getLogger("DefaultUser")->info(
+            ESAPI::getLogger('DefaultUser')->info(
                 ESAPILogger::SECURITY,
                 true,
-                "Role " . $roleName . " added to " . $this->getAccountName()
+                'Role ' . $roleName . ' added to ' . $this->getAccountName()
             );
         } else {
             //TODO: Not done in Java, but shouldn't this be logged as well?
             throw new AuthenticationAccountsException(
-                "Add role failed",
-                "Attempt to add invalid role " . $roleName . " to " . $this->getAccountName()
+                'Add role failed',
+                'Attempt to add invalid role ' . $roleName . ' to ' . $this->getAccountName()
             );
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addRoles($newRoles)
     {
@@ -279,7 +292,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function changePassword($oldPassword, $newPassword1, $newPassword2)
     {
@@ -287,25 +300,25 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function disable()
     {
         $this->_enabled = false;
-        ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "Account disabled: " . $this->getAccountName());
+        ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'Account disabled: ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function enable()
     {
         $this->enable = true;
-        ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "Account enabled: " . $this->getAccountName());
+        ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'Account enabled: ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAccountId()
     {
@@ -313,7 +326,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCSRFToken()
     {
@@ -321,16 +334,16 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getExpirationTime()
     {
         //TODO: Redo
-        return $this->getUserInfo("expirationTime");
+        return $this->getUserInfo('expirationTime');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFailedLoginCount()
     {
@@ -338,55 +351,55 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLastHostAddress()
     {
         if ($this->_lastHostAddress == null) {
-            return "local";
-        } else {
-            return $this->_lastHostAddress;
+            return 'local';
         }
+
+        return $this->_lastHostAddress;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLastFailedLoginTime()
     {
         //TODO: Redo
-        return $this->getUserInfo("lastFailedLoginTime");
+        return $this->getUserInfo('lastFailedLoginTime');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLastLoginTime()
     {
         //TODO: Redo
-        return $this->getUserInfo("lastLoginTime");
+        return $this->getUserInfo('lastLoginTime');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLastPasswordChangeTime()
     {
         //TODO: Redo
-        return $this->getUserInfo("lastPasswordChangeTime");
+        return $this->getUserInfo('lastPasswordChangeTime');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRoles()
     {
         //TODO: Redo
-        return explode(",", $this->getUserInfo("roles"));
+        return explode(',', $this->getUserInfo('roles'));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getScreenName()
     {
@@ -395,24 +408,24 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addSession($HttpSession = null)
     {
         //TODO: Redo
-        if (session_id() == "") {
+        if (session_id() == '') {
             //TODO no session established, throw some errors
         }
-        
+
         if ($HttpSession === null) {
             $HttpSession = session_id();
         }
-        
-        $_SESSION[$this->getAccountId()][$HttpSession] = array("start" => time() , "lastUpdate" => time());
+
+        $_SESSION[$this->getAccountId()][$HttpSession] = ['start' => time(), 'lastUpdate' => time()];
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function removeSession($HttpSession = null)
     {
@@ -424,7 +437,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSessions()
     {
@@ -433,7 +446,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function incrementFailedLoginCount()
     {
@@ -446,14 +459,15 @@ class DefaultUser implements User
     public function setFailedLoginCount($count)
     {
         //TODO: Redo
-        $this->setUserInfo("failedLoginCount", $count);
+        $this->setUserInfo('failedLoginCount', $count);
+
         if ($this->getFailedLoginCount() >= $this->allowedLoginAttempts) {
             $this->lock();
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isAnonymous()
     {
@@ -461,13 +475,13 @@ class DefaultUser implements User
         //Need to discuss the concept of anonymous in context with PHP
         if ($this->_uid === null) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isEnabled()
     {
@@ -475,21 +489,22 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isExpired()
     {
         //TODO: Redo
-        $ExpTime = $this->getUserInfo("expirationTime");
+        $ExpTime = $this->getUserInfo('expirationTime');
+
         if ($ExpTime < time()) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isInRole($role)
     {
@@ -497,7 +512,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isLocked()
     {
@@ -505,7 +520,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isLoggedIn()
     {
@@ -513,7 +528,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @param string $session Optional session id
      */
@@ -523,6 +538,7 @@ class DefaultUser implements User
         if ($session === null) {
             $session = session_id();
         }
+
         if (isset($_SESSION[$this->getAccountId()][$session]['start'])) {
             return (time() - $_SESSION[$this->getAccountId()][$session]['start']) > $this->sessionAbsoluteTimeout;
         }
@@ -531,7 +547,7 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @param string $session Optional session id
      */
@@ -550,45 +566,45 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function lock()
     {
         $this->_locked = true;
-        ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "Account locked: " . $this->getAccountName());
+        ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'Account locked: ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loginWithPassword($password)
     {
         //FIXME: time() might not be the correct format to be used?
-        if (is_null($password) || $password == "") {
+        if (is_null($password) || $password == '') {
             $this->setLastFailedLoginTime(time());
             $this->incrementFailedLoginCount();
-            throw new AuthenticationLoginException("Login failed", "Missing password: " . $this->getAccountName());
+            throw new AuthenticationLoginException('Login failed', 'Missing password: ' . $this->getAccountName());
         }
 
         // don't let disabled users log in
         if (! $this->isEnabled()) {
             $this->setLastFailedLoginTime(time());
             $this->incrementFailedLoginCount();
-            throw new AuthenticationLoginException("Login failed", "Disabled user attempt to login: " . $this->getAccountName());
+            throw new AuthenticationLoginException('Login failed', 'Disabled user attempt to login: ' . $this->getAccountName());
         }
 
         // don't let locked users log in
         if ($this->isLocked()) {
             $this->setLastFailedLoginTime(time());
             $this->incrementFailedLoginCount();
-            throw new AuthenticationLoginException("Login failed", "Locked user attempt to login: " . $this->getAccountName());
+            throw new AuthenticationLoginException('Login failed', 'Locked user attempt to login: ' . $this->getAccountName());
         }
 
         // don't let expired users log in
         if ($this->isExpired()) {
             $this->setLastFailedLoginTime(time());
             $this->incrementFailedLoginCount();
-            throw new AuthenticationLoginException("Login failed", "Expired user attempt to login: " . $this->getAccountName());
+            throw new AuthenticationLoginException('Login failed', 'Expired user attempt to login: ' . $this->getAccountName());
         }
 
         $this->logout();
@@ -599,17 +615,17 @@ class DefaultUser implements User
             ESAPI::getAuthenticator()->setCurrentUser($this);
             $this->setLastLoginTime(time());
             $this->setLastHostAddress(ESAPI::getHttpUtilities()->getCurrentRequest()->getRemoteHost());
-            ESAPI::getLogger("DefaultUser")->trace(ESAPILogger::SECURITY, "User logged in: " . $this->_accountName);
+            ESAPI::getLogger('DefaultUser')->trace(ESAPILogger::SECURITY, 'User logged in: ' . $this->_accountName);
         } else {
             $this->_loggedIn = false;
             $this->setLastFailedLoginTime(time());
             $this->incrementFailedLoginCount();
-            throw new AuthenticationLoginException("Login failed", "Incorrect password provided for " . $this->getAccountName());
+            throw new AuthenticationLoginException('Login failed', 'Incorrect password provided for ' . $this->getAccountName());
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function logout()
     {
@@ -626,17 +642,17 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function removeRole($role)
     {
         $role = strtolower($role);
         unset($this->_roles[$role]);
-        ESAPI::getLogger("DefaultLogger")->trace(ESAPILogger::SECURITY, true, "Role " . $role . " removed from " . $this->getAccountName());
+        ESAPI::getLogger('DefaultLogger')->trace(ESAPILogger::SECURITY, true, 'Role ' . $role . ' removed from ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resetCSRFToken() //throws AuthenticationException;
     {
@@ -646,21 +662,22 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setAccountName($accountName)
     {
         $oldAccountName = $this->getAccountName();
         $this->_accountName = strtolower($accountName);
+
         if (!is_null($oldAccountName)) {
-            ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "Account name changed from " . $oldAccountName . " to " . $this->getAccountName());
+            ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'Account name changed from ' . $oldAccountName . ' to ' . $this->getAccountName());
         }
     }
 
     /**
      * Sets this user's account ID.
      *
-     * @param integer $accountId
+     * @param int $accountId
      */
     public function setAccountID($accountId)
     {
@@ -668,44 +685,44 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setExpirationTime(DateTime $expirationTime)
     {
         //TODO: Redo
-        $this->setUserInfo("expirationTime", $expirationTime);
+        $this->setUserInfo('expirationTime', $expirationTime);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setRoles($roles)
     {
         //TODO: Redo
-        $this->setUserInfo("roles", implode(",", $Roles));
+        $this->setUserInfo('roles', implode(',', $Roles));
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setScreenName($screenName)
     {
         $this->_screenName = $screenName;
-        ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "ScreenName changed to " . $screenName . " for " . $this->getAccountName());
+        ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'ScreenName changed to ' . $screenName . ' for ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function unlock()
     {
         $this->_locked = false;
         $this->_failedLoginCount = 0;
-        ESAPI::getLogger("DefaultUser")->info(ESAPILogger::SECURITY, true, "Account unlocked: " . $this->getAccountName());
+        ESAPI::getLogger('DefaultUser')->info(ESAPILogger::SECURITY, true, 'Account unlocked: ' . $this->getAccountName());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function verifyPassword($password)
     {
@@ -713,12 +730,12 @@ class DefaultUser implements User
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setLastFailedLoginTime($lastFailedLoginTime)
     {
         //TODO: Redo
-        $this->setUserInfo("lastFailedLoginTime", $lastFailedLoginTime);
+        $this->setUserInfo('lastFailedLoginTime', $lastFailedLoginTime);
     }
 
     public function setLastHostAddress($remoteHost)
@@ -726,31 +743,31 @@ class DefaultUser implements User
         //TODO: Redo
         if ($this->_lastHostAddress != null && $this->_lastHostAddress != $remoteHost) {
             // returning remote address not remote hostname to prevent DNS lookup
-            new AuthenticationHostException("Host change", "User session just jumped from " . $this->_lastHostAddress . " to " . $remoteHost);
+            new AuthenticationHostException('Host change', 'User session just jumped from ' . $this->_lastHostAddress . ' to ' . $remoteHost);
         }
         $this->_lastHostAddress = $remoteHost;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setLastLoginTime($lastLoginTime)
     {
         //TODO: Redo
-        $this->setUserInfo("lastLoginTime", $lastLoginTime);
+        $this->setUserInfo('lastLoginTime', $lastLoginTime);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setLastPasswordChangeTime($lastPasswordChangeTime)
     {
         //TODO: Redo
-        $this->setUserInfo("lastPasswordChangeTime", $lastPasswordChangeTime);
+        $this->setUserInfo('lastPasswordChangeTime', $lastPasswordChangeTime);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getEventMap()
     {
@@ -759,7 +776,7 @@ class DefaultUser implements User
             'Method "' . __METHOD__ . '" not implemented'
         );
     }
-    
+
     /*
      * The ANONYMOUS user is used to represent an unidentified user. Since there is
      * always a real user, the ANONYMOUS user is better than using NULL to represent

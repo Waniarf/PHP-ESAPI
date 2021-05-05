@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -47,8 +45,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -60,9 +56,9 @@
  */
 class EnterpriseSecurityException extends Exception
 {
-
     /** The logger. */
     protected $logger;
+
     protected $logMessage;
 
     /**
@@ -75,15 +71,15 @@ class EnterpriseSecurityException extends Exception
     public function __construct($userMessage = '', $logMessage = '')
     {
         $cause = 0;
-        
+
         if (empty($userMessage)) {
             $userMessage = null;
         }
-                
+
         parent::__construct($userMessage);
-        
+
         $this->logMessage = $logMessage;
-        $this->logger = ESAPI::getAuditor("EnterpriseSecurityException");
+
         if (! ESAPI::getSecurityConfiguration()->getDisableIntrusionDetection()) {
             ESAPI::getIntrusionDetector()->addException($this);
         }

@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -32,8 +30,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -45,7 +41,6 @@
  */
 class AuthenticationHostException extends AuthenticationException
 {
-
     /**
      * Instantiates a new authentication exception.
      *

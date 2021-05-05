@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -34,8 +32,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -47,7 +43,6 @@
  */
 class StringUtilities
 {
-
     /**
      * Removes all unprintable characters from a string
      * and replaces with a space for use in an HTTP header.
@@ -65,6 +60,7 @@ class StringUtilities
         $i = str_split($input);
 
         $sb = '';
+
         foreach ($i as $c) {
             if ($c > chr(32) && $c < chr(127)) {
                 $sb .= $c;
@@ -87,7 +83,7 @@ class StringUtilities
     public static function union($c1, $c2)
     {
         if (empty($c1) && empty($c2)) {
-            return null;
+            return;
         }
 
         return sort(array_unique(array_merge($c1, $c2)));

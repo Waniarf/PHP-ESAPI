@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -29,8 +27,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -41,9 +37,8 @@
  */
 class EmailAddressValidationRule extends StringValidationRule
 {
-
     private $_auditor;
- 
+
     /**
      * Constructor sets-up the validation rule with a descriptive name for this
      * validator, an optional Encoder instance (for canonicalization) and an
@@ -60,8 +55,6 @@ class EmailAddressValidationRule extends StringValidationRule
     public function __construct($typeName, $encoder = null, $whitelistPattern = null)
     {
         parent::__construct($typeName, $encoder);
-
-        $this->_auditor = ESAPI::getAuditor("EmailAddressValidationRule");
     }
 
     /**
@@ -85,6 +78,7 @@ class EmailAddressValidationRule extends StringValidationRule
         $canonical = parent::getValid($context, $input);
 
         $clean_email = filter_var($canonical, FILTER_SANITIZE_EMAIL);
+
         if ($clean_email == false) {
             throw new ValidationException(
                 'Email Address Input is not valid.',
@@ -120,10 +114,11 @@ class EmailAddressValidationRule extends StringValidationRule
     public function sanitize($context, $input)
     {
         $clean_email = filter_var($input, FILTER_SANITIZE_EMAIL);
+
         if ($clean_email == false) {
-            return "";
-        } else {
-            return $clean_email;
+            return '';
         }
+
+        return $clean_email;
     }
 }

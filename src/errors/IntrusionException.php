@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -38,8 +36,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Errors
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -51,8 +47,6 @@
  */
 class IntrusionException extends Exception
 {
-
-    protected $logger; // ESAPI Logger class
     protected $logMessage; // Message to be sent to the log
 
     /**
@@ -66,10 +60,8 @@ class IntrusionException extends Exception
     public function __construct($userMessage = '', $logMessage = '')
     {
         parent::__construct($userMessage);
-        
+
         $this->logMessage = $logMessage;
-        $logger = ESAPI::getAuditor("IntrusionException");
-        $logger->error(DefaultAuditor::SECURITY, false, "INTRUSION - " . $logMessage);
     }
 
     /**

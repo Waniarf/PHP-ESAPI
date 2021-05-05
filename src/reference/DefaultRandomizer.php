@@ -15,22 +15,18 @@
  * @created 2009
  *
  * @since 1.6
- *
- * @package ESAPI_Reference
  */
-
 class DefaultRandomizer implements Randomizer
 {
-    
     private $maxRand;
 
     public function __construct()
     {
         $this->maxRand = mt_getrandmax();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomString($numChars, $charset)
     {
@@ -41,6 +37,7 @@ class DefaultRandomizer implements Randomizer
         $l = strlen($charset) - 1;
 
         $rs = '';
+
         for ($i = 0; $i < $numChars; $i++) {
             $rs .= $charset[mt_rand(0, $l)];
         }
@@ -49,15 +46,15 @@ class DefaultRandomizer implements Randomizer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomBoolean()
     {
-        return ((mt_rand(0, 100) % 2) ? true : false);
+        return (mt_rand(0, 100) % 2) ? true : false;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomInteger($min, $max)
     {
@@ -65,7 +62,7 @@ class DefaultRandomizer implements Randomizer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomLong()
     {
@@ -73,7 +70,7 @@ class DefaultRandomizer implements Randomizer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomFilename($extension = '')
     {
@@ -86,7 +83,7 @@ class DefaultRandomizer implements Randomizer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomReal($min, $max)
     {
@@ -98,7 +95,7 @@ class DefaultRandomizer implements Randomizer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRandomGUID()
     {

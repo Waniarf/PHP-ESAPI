@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -30,8 +28,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -43,10 +39,9 @@
  */
 class MySQLCodec extends Codec
 {
-
     const MYSQL_ANSI = 0;
     const MYSQL_STD = 1;
-    
+
     //To avoid performance loss in decodeCharacterMySQL
     const ORD_VALUE_0 = 48;
     const ORD_VALUE_B = 98;
@@ -59,9 +54,9 @@ class MySQLCodec extends Codec
     const ORD_VALUE_QUOTE = 39;
     const ORD_VALUE_BSLASH = 92;
     const ORD_VALUE_UNDERSCORE = 95;
-    
+
     private $_mode;
-    
+
     /**
      * Public Constructor.
      *
@@ -75,7 +70,7 @@ class MySQLCodec extends Codec
         parent::__construct();
         $this->_mode = $mode;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -84,55 +79,56 @@ class MySQLCodec extends Codec
         //detect encoding, special-handling for chr(172) and chr(128) to chr(159)
         //which fail to be detected by mb_detect_encoding()
         $initialEncoding = $this->detectEncoding($c);
-        
+
         // Normalize encoding to UTF-32
         $_4ByteUnencodedOutput = $this->normalizeEncoding($c);
-        
+
         // Start with nothing; format it to match the encoding of the string passed
         //as an argument.
-        $encodedOutput = mb_convert_encoding("", $initialEncoding);
-        
+        $encodedOutput = mb_convert_encoding('', $initialEncoding);
+
         // Grab the 4 byte character.
         $_4ByteCharacter = $this->forceToSingleCharacter($_4ByteUnencodedOutput);
-        
+
         // Get the ordinal value of the character.
-        list(, $ordinalValue) = unpack("N", $_4ByteCharacter);
-        
+        [, $ordinalValue] = unpack('N', $_4ByteCharacter);
+
         // check for immune characters
         foreach ($immune as $immuneCharacter) {
             // Convert to UTF-32 (4 byte characters, regardless of actual number of
             //bytes in the character).
             $_4ByteImmuneCharacter = $this->normalizeEncoding($immuneCharacter);
-            
+
             // Ensure it's a single 4 byte character (since $immune is an array of
             //strings) by grabbing only the 1st multi-byte character.
             $_4ByteImmuneCharacter = $this->forceToSingleCharacter(
                 $_4ByteImmuneCharacter
             );
-            
+
             // If the character is immune then return it.
             if ($_4ByteCharacter === $_4ByteImmuneCharacter) {
                 return $encodedOutput . chr($ordinalValue);
             }
         }
-        
+
         // Check for alphanumeric characters
         $hex = $this->getHexForNonAlphanumeric($_4ByteCharacter);
+
         if ($hex === null) {
             return $encodedOutput . chr($ordinalValue);
         }
-        
+
         switch ($this->_mode) {
             case self::MYSQL_ANSI:
                 return $encodedOutput . $this->_encodeCharacterANSI($c);
             case self::MYSQL_STD:
                 return $encodedOutput . $this->_encodeCharacterMySQL($c);
         }
-        
+
         //Mode has an incorrect value
         return $encodedOutput . chr($ordinalValue);
     }
-    
+
     /**
      * encodeCharacterANSI encodes for ANSI SQL.
      *
@@ -146,21 +142,21 @@ class MySQLCodec extends Codec
     {
         // Normalize encoding to UTF-32
         $_4ByteUnencodedOutput = $this->normalizeEncoding($c);
-        
+
         // Grab the 4 byte character
         $_4ByteCharacter = $this->forceToSingleCharacter($_4ByteUnencodedOutput);
-        
+
         // Get the ordinal value of the character.
-        list(, $ordinalValue) = unpack("N", $_4ByteCharacter);
-        
+        [, $ordinalValue] = unpack('N', $_4ByteCharacter);
+
         //If the character is a quote
         if ($ordinalValue == 0x27) {
             return $c . $c;
-        } else {
-            return $c;
         }
+
+        return $c;
     }
-    
+
     /**
      * Encode a character suitable for MySQL.
      *
@@ -172,41 +168,41 @@ class MySQLCodec extends Codec
     {
         // Normalize encoding to UTF-32
         $_4ByteUnencodedOutput = $this->normalizeEncoding($c);
-        
+
         // Grab the 4 byte character
         $_4ByteCharacter = $this->forceToSingleCharacter($_4ByteUnencodedOutput);
-        
+
         // Get the ordinal value of the character.
-        list(, $ordinalValue) = unpack("N", $_4ByteCharacter);
-        
+        [, $ordinalValue] = unpack('N', $_4ByteCharacter);
+
         switch ($ordinalValue) {
             case 0x00:
-                return "\\0";
+                return '\\0';
             case 0x08:
-                return "\\b";
+                return '\\b';
             case 0x09:
-                return "\\t";
+                return '\\t';
             case 0x0a:
-                return "\\n";
+                return '\\n';
             case 0x0d:
-                return "\\r";
+                return '\\r';
             case 0x1a:
-                return "\\Z";
+                return '\\Z';
             case 0x22:
-                return "\\\"";
+                return '\\"';
             case 0x25:
-                return "\\%";
+                return '\\%';
             case 0x27:
                 return "\\'";
             case 0x5c:
-                return "\\\\";
+                return '\\\\';
             case 0x5f:
-                return "\\_";
+                return '\\_';
         }
-        
+
         return '\\' . $c;
     }
-    
+
     /**
      * Returns the decoded version of the character starting at index, or
      * NULL if no decoding is possible.
@@ -220,31 +216,32 @@ class MySQLCodec extends Codec
     {
         // Assumption/prerequisite: $c is a UTF-32 encoded string
         $_4ByteEncodedInput = $input;
-        
-        if (mb_substr($_4ByteEncodedInput, 0, 1, "UTF-32") === null) {
+
+        if (mb_substr($_4ByteEncodedInput, 0, 1, 'UTF-32') === null) {
             // 1st character is null, so return null
             // eat the 1st character off the string and return null
-            $_4ByteEncodedInput = mb_substr($input, 1, mb_strlen($_4ByteEncodedInput, "UTF-32"), "UTF-32"); //todo: no point in doing this
-            return array(
+            $_4ByteEncodedInput = mb_substr($input, 1, mb_strlen($_4ByteEncodedInput, 'UTF-32'), 'UTF-32'); //todo: no point in doing this
+
+            return [
                 'decodedCharacter' => null,
-                'encodedString' => null
-            );
+                'encodedString' => null,
+            ];
         }
-        
+
         switch ($this->_mode) {
             case self::MYSQL_ANSI:
                 return $this->_decodeCharacterANSI($_4ByteEncodedInput);
             case self::MYSQL_STD:
                 return $this->_decodeCharacterMySQL($_4ByteEncodedInput);
         }
-        
+
         //Mode has an incorrect value
-        return array(
+        return [
             'decodedCharacter' => null,
-            'encodedString' => null
-        );
+            'encodedString' => null,
+        ];
     }
-    
+
     /**
      * decodeCharacterANSI decodes the next character from ANSI SQL escaping.
      *
@@ -255,25 +252,25 @@ class MySQLCodec extends Codec
     private function _decodeCharacterANSI($input)
     {
         $_4ByteEncodedInput = $input;
-        
+
         // if this is not an encoded character, return null
-        if (mb_substr($_4ByteEncodedInput, 0, 1, "UTF-32") != $this->normalizeEncoding("'")) {
+        if (mb_substr($_4ByteEncodedInput, 0, 1, 'UTF-32') != $this->normalizeEncoding("'")) {
             // 1st character is not part of encoding pattern, so return null
-            return array(
+            return [
                 'decodedCharacter' => null,
-                'encodedString' => null
-            );
+                'encodedString' => null,
+            ];
         }
-        
+
         // 1st character is part of encoding pattern...
-        $second = mb_substr($_4ByteEncodedInput, 1, 1, "UTF-32");
-        
-        return array(
+        $second = mb_substr($_4ByteEncodedInput, 1, 1, 'UTF-32');
+
+        return [
             'decodedCharacter' => $second,
-            'encodedString' => mb_substr($input, 0, 2, "UTF-32")
-        );
+            'encodedString' => mb_substr($input, 0, 2, 'UTF-32'),
+        ];
     }
-    
+
     /**
      * decodeCharacterMySQL decodes all the potential escaped characters that
      * MySQL is prepared to escape.
@@ -285,20 +282,20 @@ class MySQLCodec extends Codec
     private function _decodeCharacterMySQL($input)
     {
         $_4ByteEncodedInput = $input;
-        
+
         // if this is not an encoded character, return null
-        if (mb_substr($_4ByteEncodedInput, 0, 1, "UTF-32") != $this->normalizeEncoding('\\')) {
+        if (mb_substr($_4ByteEncodedInput, 0, 1, 'UTF-32') != $this->normalizeEncoding('\\')) {
             // 1st character is not part of encoding pattern, so return null
-            return array(
+            return [
                 'decodedCharacter' => null,
-                'encodedString' => null
-            );
+                'encodedString' => null,
+            ];
         }
-        
+
         // 1st character is part of encoding pattern...
-        $second = mb_substr($_4ByteEncodedInput, 1, 1, "UTF-32");
-        list(, $ordinalValue) = unpack("N", $second);
-        
+        $second = mb_substr($_4ByteEncodedInput, 1, 1, 'UTF-32');
+        [, $ordinalValue] = unpack('N', $second);
+
         //if second character is special, so return the original value
         switch ($ordinalValue) {
             case self::ORD_VALUE_0:
@@ -335,10 +332,10 @@ class MySQLCodec extends Codec
                 $second = $this->normalizeEncoding(chr(0x5f));
                 break;
         }
-        
-        return array(
+
+        return [
             'decodedCharacter' => $second,
-            'encodedString' => mb_substr($input, 0, 2, "UTF-32")
-        );
+            'encodedString' => mb_substr($input, 0, 2, 'UTF-32'),
+        ];
     }
 }

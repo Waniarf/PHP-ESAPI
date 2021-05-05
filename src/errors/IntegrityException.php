@@ -15,8 +15,6 @@
  * @created 2008
  *
  * @since 1.4
- *
- * @package ESAPI_Errors
  */
 
 /**
@@ -30,7 +28,7 @@ class IntegrityException extends EnterpriseSecurityException
      * Create a new IntegrityException.
      *
      * @param string $userMessage The message to display to users
-     * @param string $logMessage The message logged
+     * @param string $logMessage  The message logged
      */
     public function __construct($userMessage = '', $logMessage = '')
     {

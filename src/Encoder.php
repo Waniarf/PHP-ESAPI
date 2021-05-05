@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Linden Darling <linden.darling@jds.net.au>
  * @author    jah <jah@jahboite.co.uk>
@@ -35,8 +33,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Linden Darling <linden.darling@jds.net.au>
  * @author    jah <jah@jahboite.co.uk>
@@ -50,18 +46,15 @@
  */
 interface Encoder
 {
-
     /*
      * Standard character sets.
      */
-    const CHAR_LOWERS        = 'abcdefghijklmnopqrstuvwxyz';
-    const CHAR_UPPERS        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const CHAR_DIGITS        = '0123456789';
-    const CHAR_SPECIALS      = '.-_!@$^*=~|+?';
-    const CHAR_LETTERS
-        = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const CHAR_ALPHANUMERICS
-        = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    public const CHAR_LOWERS = 'abcdefghijklmnopqrstuvwxyz';
+    public const CHAR_UPPERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const CHAR_DIGITS = '0123456789';
+    public const CHAR_SPECIALS = '.-_!@$^*=~|+?';
+    public const CHAR_LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const CHAR_ALPHANUMERICS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
     /*
      * Password character sets.
@@ -69,29 +62,29 @@ interface Encoder
     /**
      * Lower case alphabet, for passwords, which excludes 'l', 'i' and 'o'.
      */
-    const CHAR_PASSWORD_LOWERS = 'abcdefghjkmnpqrstuvwxyz';
+    public const CHAR_PASSWORD_LOWERS = 'abcdefghjkmnpqrstuvwxyz';
 
     /**
      * Upper case alphabet, for passwords, which excludes 'I' and 'O'.
      */
-    const CHAR_PASSWORD_UPPERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    public const CHAR_PASSWORD_UPPERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
     /**
      * Numerical digits, for passwords, which excludes '0'.
      */
-    const CHAR_PASSWORD_DIGITS = '123456789';
+    public const CHAR_PASSWORD_DIGITS = '123456789';
 
     /**
      * Special characters, for passwords, excluding '|' which resembles
      * alphanumeric characters 'i' and '1' and excluding '+' used in URL
      * encoding.
      */
-    const CHAR_PASSWORD_SPECIALS = '.-_!@$*=?';
+    public const CHAR_PASSWORD_SPECIALS = '.-_!@$*=?';
 
     /**
      * Union of Encoder::CHAR_PASSWORD_LOWERS and Encoder::CHAR_PASSWORD_UPPERS.
      */
-    const CHAR_PASSWORD_LETTERS = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+    public const CHAR_PASSWORD_LETTERS = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 
     /**
      * Data canonicalization.
@@ -143,7 +136,7 @@ interface Encoder
      *                       desired, FALSE otherwise.
      *
      * @throws IntrusionException if, in strict mode, canonicalization detects
-     *         multiple or mixed encoding.
+     *                            multiple or mixed encoding.
      *
      * @return the canonicalized input string.
      *

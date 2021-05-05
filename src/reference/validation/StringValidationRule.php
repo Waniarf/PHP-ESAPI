@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,10 +41,12 @@
  */
 class StringValidationRule extends BaseValidationRule
 {
-
     protected $whitelistPatterns;
+
     protected $blacklistPatterns;
+
     protected $minLength = 0;
+
     protected $maxLength = PHP_INT_MAX;
 
     /**
@@ -66,8 +64,8 @@ class StringValidationRule extends BaseValidationRule
     {
         parent::__construct($typeName, $encoder);
 
-        $this->whitelistPatterns = array();
-        $this->blacklistPatterns = array();
+        $this->whitelistPatterns = [];
+        $this->blacklistPatterns = [];
 
         if (is_string($whiteListPattern)) {
             $this->addWhitelistPattern($whiteListPattern);
@@ -95,6 +93,7 @@ class StringValidationRule extends BaseValidationRule
                 'string $pattern'
             );
         }
+
         if ($pattern == '') {
             ESAPI::getLogger()->warning(
                 ESAPILogger::SECURITY, false,
@@ -120,14 +119,14 @@ class StringValidationRule extends BaseValidationRule
                 'string $pattern'
             );
         }
-        
+
         if ($pattern == '') {
             ESAPI::getLogger()->warning(
                 ESAPILogger::SECURITY, false,
                 'addBlacklistPattern received $pattern as an empty string.'
             );
         }
-        
+
         array_push($this->blacklistPatterns, $pattern);
     }
 
@@ -192,6 +191,7 @@ class StringValidationRule extends BaseValidationRule
         if (! is_string($context)) {
             $context = 'NoContextSupplied'; // TODO Invalid Arg Exception?
         }
+
         if (! is_string($input) && $input !== null) {
             throw new ValidationException(
                 "{$context}: Input required",
@@ -199,6 +199,7 @@ class StringValidationRule extends BaseValidationRule
                 $context
             );
         }
+
         if ($this->minLength > $this->maxLength) {
             throw new RuntimeException(
                 'Validation misconfiguration - $minLength should not be greater ' .
@@ -208,7 +209,7 @@ class StringValidationRule extends BaseValidationRule
 
         if ($input === null || $input == '') {
             if ($this->allowNull) {
-                return null;
+                return;
             }
             throw new ValidationException(
                 "{$context}: Input required",
@@ -219,6 +220,7 @@ class StringValidationRule extends BaseValidationRule
 
         // strict canonicalization
         $canonical = null;
+
         try {
             $canonical = $this->encoder->canonicalize($input, true);
         } catch (EncodingException $e) {
@@ -233,6 +235,7 @@ class StringValidationRule extends BaseValidationRule
         // check length
         $charEnc = mb_detect_encoding($canonical);
         $length = mb_strlen($canonical, $charEnc);
+
         if ($length < $this->minLength) {
             throw new ValidationException(
                 $context . ': Invalid input. Input was shorter than the ' .
@@ -242,6 +245,7 @@ class StringValidationRule extends BaseValidationRule
                 $context
             );
         }
+
         if ($length > $this->maxLength) {
             throw new ValidationException(
                 $context . ': Invalid input. Input was longer than the ' .

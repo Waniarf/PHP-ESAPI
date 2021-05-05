@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -24,7 +22,7 @@
  * @link      http://www.owasp.org/index.php/ESAPI
  */
 
-/**
+/*
  * @var string Define the name of the Auditor instance for CodecDebug.
  */
 define('CD_LOG', 'CodecDebug');
@@ -43,8 +41,6 @@ define('CD_LOG', 'CodecDebug');
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -55,14 +51,16 @@ define('CD_LOG', 'CodecDebug');
  */
 class CodecDebug
 {
-    
     private $_verb;
+
     private $_buf;
+
     private $_allowRecurse = true;
+
     private $_enabled = false;
 
     private static $_instance;
-    
+
     /**
      * Prevents public cloning of this singleton class.
      */
@@ -89,7 +87,7 @@ class CodecDebug
     public static function getInstance()
     {
         if (!self::$_instance) {
-            self::$_instance = new CodecDebug();
+            self::$_instance = new self();
         }
 
         return self::$_instance;
@@ -104,12 +102,11 @@ class CodecDebug
     public function addEncodedString($stringNormalizedEncoding)
     {
         if ($this->_enabled == false
-            || ! ESAPI::getAuditor(CD_LOG)->isDebugEnabled()
             || ! $this->_allowRecurse
         ) {
             return;
         }
-        $this->_verb = "Decod";
+        $this->_verb = 'Decod';
         $this->_addString($stringNormalizedEncoding);
     }
 
@@ -122,12 +119,11 @@ class CodecDebug
     public function addUnencodedString($stringNormalizedEncoding)
     {
         if ($this->_enabled == false
-            || ! ESAPI::getAuditor(CD_LOG)->isDebugEnabled()
             || ! $this->_allowRecurse
         ) {
             return;
         }
-        $this->_verb = "Encod";
+        $this->_verb = 'Encod';
         $this->_addString($stringNormalizedEncoding);
     }
 
@@ -142,28 +138,28 @@ class CodecDebug
     public function output($codecOutput)
     {
         if ($this->_enabled == false
-            || ! ESAPI::getAuditor(CD_LOG)->isDebugEnabled()
             || ! $this->_allowRecurse
         ) {
             return;
         }
+
         if ($this->_buf === null) {
             return; // the codec being tested has not added any normalised inputs.
         }
         $output = '';
-    
+
         $this->_allowRecurse = false;
         $htmlCodecOutput = ESAPI::getEncoder()->encodeForHTML($codecOutput);
+
         if ($htmlCodecOutput == '') {
             $output = $this->_buf . $this->_verb . 'ed string was an empty string.';
         } else {
             $output = $this->_buf . $this->_verb . 'ed: [' . $htmlCodecOutput . ']';
         }
 
-        ESAPI::getAuditor(CD_LOG)->debug(Auditor::SECURITY, true, $output);
         $this->_allowRecurse = true;
 
-        $this->_buf  = null;
+        $this->_buf = null;
         $this->_verb = null;
     }
 
@@ -177,7 +173,6 @@ class CodecDebug
     private function _addString($string)
     {
         if ($this->_enabled == false
-            || ! ESAPI::getAuditor(CD_LOG)->isDebugEnabled()
             || ! $this->_allowRecurse
         ) {
             return;
@@ -185,6 +180,7 @@ class CodecDebug
         // start with some details about the caller
         if ($this->_buf === null) {
             $caller = null;
+
             try {
                 $caller = $this->_shortTrace();
             } catch (Exception $e) {
@@ -194,12 +190,14 @@ class CodecDebug
         }
         // add the string, char by char
         $len = mb_strlen($string, 'UTF-32');
+
         if ($len == 0) {
             $this->_addNormalized('');
 
             return;
         }
-        for ($i = 0; $i<$len; $i++) {
+
+        for ($i = 0; $i < $len; $i++) {
             $char = mb_substr($string, $i, 1, 'UTF-32');
             $this->_addNormalized($char);
         }
@@ -216,7 +214,8 @@ class CodecDebug
         ob_start();
         var_dump($charNormalizedEncoding);
         $dumpedVar = ob_get_clean();
-        $matches = array();
+        $matches = [];
+
         if (! preg_match('/\(length=([0-9]+)\)/', $dumpedVar, $matches)) {
             $matches[1] = strtok(stristr($dumpedVar, '('), '"');
         }
@@ -241,7 +240,8 @@ class CodecDebug
         $pos = 0;
         $trace = '';
         $objName = '';
-        for ($i = 2; $i<8; $i++) {
+
+        for ($i = 2; $i < 8; $i++) {
             if (array_key_exists($i, $dt)
                 && array_key_exists('class', $dt[$i])
                 && $dt[$i]['class'] == 'Codec'
@@ -257,13 +257,14 @@ class CodecDebug
                 break;
             }
         }
+
         if ($pos == 0) {
             throw new Exception('backtrace is odd!'); // abort!
         }
-        $trace .= $dt[$pos]['class'] . '::' .  $dt[$pos--]['function'] . ', ';
-        $trace .= $dt[$pos]['class'] . '::' .  $dt[$pos--]['function'] . ', ';
-        $trace .= $dt[$pos]['class'] . '::' .  $dt[$pos]['function']   . $objName;
-    
+        $trace .= $dt[$pos]['class'] . '::' . $dt[$pos--]['function'] . ', ';
+        $trace .= $dt[$pos]['class'] . '::' . $dt[$pos--]['function'] . ', ';
+        $trace .= $dt[$pos]['class'] . '::' . $dt[$pos]['function'] . $objName;
+
         return $trace;
     }
 }

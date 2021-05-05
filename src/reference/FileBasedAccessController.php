@@ -15,16 +15,12 @@
  * @created 2008
  *
  * @since 1.4
- *
- * @package ESAPI_Reference
  */
 
 /**
  * Reference Implementation of the FileBasedAccessController interface.
  *
  * @category  OWASP
- *
- * @package   ESAPI_Reference
  *
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -35,7 +31,6 @@
  */
 class FileBasedAccessController implements AccessController
 {
-
     /**
      * Checks if an account is authorized to access the referenced URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
@@ -100,7 +95,7 @@ class FileBasedAccessController implements AccessController
      * AccessControlException is not thrown, this method should return TRUE.
      *
      * @param string $action The action to check for in the configuration file in the resource directory
-     * @param string $data The data to check for in the configuration file in the resource directory
+     * @param string $data   The data to check for in the configuration file in the resource directory
      *
      * @return TRUE, if is authorized for the data
      */
@@ -153,7 +148,7 @@ class FileBasedAccessController implements AccessController
      * Checks if an account is authorized to access the referenced URL. The implementation should allow
      * access to be granted to any part of the URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
-     * <pre>ESAPI::getAccessController()->assertAuthorizedForURL($_SERVER['REQUEST_URI']);</pre>
+     * <pre>ESAPI::getAccessController()->assertAuthorizedForURL($_SERVER['REQUEST_URI']);</pre>.
      *
      * This method throws an AccessControlException if access is not authorized, or if the referenced URL does not
      * exist. If the User is authorized, this method simply returns.
@@ -263,7 +258,7 @@ class FileBasedAccessController implements AccessController
      * </ol>.
      *
      * @param string $action The action to check for in the configuration file in the resource directory
-     * @param string $data The data to check for in the configuration file in the resource directory
+     * @param string $data   The data to check for in the configuration file in the resource directory
      *
      * @throws AccessControlException If access is not permitted
      */
@@ -274,7 +269,7 @@ class FileBasedAccessController implements AccessController
             'Method "' . __METHOD__ . '" not implemented'
         );
     }
-     
+
     /**
      * Checks if an account is authorized to access the referenced file. The implementation should validate and canonicalize the
      * input to be sure the filepath is not malicious.

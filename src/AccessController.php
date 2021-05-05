@@ -14,8 +14,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -35,8 +33,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @copyright 2009-2010 The OWASP Foundation
@@ -48,7 +44,6 @@
  */
 interface AccessController
 {
-
     /**
      * Checks if an account is authorized to access the referenced URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
@@ -95,7 +90,7 @@ interface AccessController
      * AccessControlException is not thrown, this method should return TRUE.
      *
      * @param string $action The action to check for in the configuration file in the resource directory
-     * @param string $data The data to check for in the configuration file in the resource directory
+     * @param string $data   The data to check for in the configuration file in the resource directory
      *
      * @return bool TRUE, if is authorized for the data
      */
@@ -222,7 +217,7 @@ interface AccessController
      * </ol>
      *
      * @param string $action The action to check for in the configuration file in the resource directory
-     * @param string $data The data to check for in the configuration file in the resource directory
+     * @param string $data   The data to check for in the configuration file in the resource directory
      *
      * @throws AccessControlException if access is not permitted
      */

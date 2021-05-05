@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Laura Bell <laura.d.bell@gmail.com>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -33,8 +31,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Laura Bell <laura.d.bell@gmail.com>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -46,7 +42,6 @@
  */
 interface AuditorFactory
 {
-
     /**
      * Gets the logger associated with the specified module name. The module
      * name is used by the logger to log which module is generating the log

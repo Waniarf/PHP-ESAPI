@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -33,8 +31,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -46,7 +42,6 @@
  */
 interface Sanitizer
 {
-
     /**
      * Returns valid, "safe" HTML.
      *
@@ -61,7 +56,7 @@ interface Sanitizer
      * @return string valid, "safe" HTML.
      */
     public function getSanitizedHTML($context, $input);
-    
+
     /**
      * Returns valid, "safe" email address.
      *
@@ -77,7 +72,7 @@ interface Sanitizer
      * @return string valid, "safe" email address.
      */
     public function getSanitizedEmailAddress($context, $input);
-    
+
     /**
      * Returns valid, "safe" URL.
      *

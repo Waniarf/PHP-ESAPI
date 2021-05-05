@@ -1,10 +1,9 @@
 {
-    "name": "owasp/esapi",
+    "name": "owasp/esapi-php8",
     "description": "OWASP Enterprise Security API",
     "license": "BSD-3-Clause",
     "minimum-stability": "stable",
     "require": {
-        "apache/log4php": "2.0.0",
         "ezyang/htmlpurifier": "~4"
     },
     "require-dev": {

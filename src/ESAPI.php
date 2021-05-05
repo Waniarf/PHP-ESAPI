@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Bipin Upadhyay <bipin.code@gmail.com>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -36,8 +34,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Bipin Upadhyay <bipin.code@gmail.com>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -50,20 +46,30 @@
  */
 class ESAPI
 {
-
     private static $_accessController = null;
+
     private static $_encoder = null;
+
     private static $_encryptor = null;
+
     private static $_executor = null;
+
     private static $_httpUtilities = null;
+
     private static $_intrusionDetector = null;
+
     private static $_defaultAuditor = null;
+
     private static $_auditorFactory = null;
+
     private static $_randomizer = null;
+
     private static $_securityConfiguration = null;
+
     private static $_validator = null;
+
     private static $_sanitizer = null;
-        
+
     /**
      * This is the locator class' constructor, which prevents instantiation of this
      * class.
@@ -74,8 +80,6 @@ class ESAPI
     {
         self::getSecurityConfiguration($path);
 
-        self::getAuditor("ESAPI Startup");
-        
         self::getIntrusionDetector();
     }
 
@@ -280,25 +284,6 @@ class ESAPI
     }
 
     /**
-     * Set then get the current ESAPI Logger factory object being used to create
-     * the ESAPI Logger for this application.
-     *
-     * @param string $logger The new ESAPI Auditor factory name.
-     *
-     * @return the current ESAPI Logger.
-     */
-    public static function getAuditor($logger)
-    {
-        if (self::$_auditorFactory == null) {
-            include_once __DIR__ .
-              '/reference/DefaultAuditorFactory.php';
-            self::setAuditorFactory(new DefaultAuditorFactory());
-        }
-
-        return self::$_auditorFactory->getLogger($logger);
-    }
-
-    /**
      * Get the current ESAPI Auditor object being used to to audit security-relevant
      * events for this application.
      *
@@ -307,7 +292,7 @@ class ESAPI
     public static function log()
     {
         if (self::$_defaultAuditor == null) {
-            self::$_defaultAuditor = self::$_auditorFactory->getLogger("DefaultLogger");
+            self::$_defaultAuditor = self::$_auditorFactory->getLogger('DefaultLogger');
         }
 
         return self::$_defaultAuditor;
@@ -380,7 +365,7 @@ class ESAPI
      * security configuration for this application.
      *
      * @param SecurityConfiguration $securityConfiguration The new ESAPI
-     * SecurityConfiguration.
+     *                                                     SecurityConfiguration.
      *
      * @return does not return a value.
      */

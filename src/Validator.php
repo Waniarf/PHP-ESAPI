@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -37,8 +35,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -52,7 +48,6 @@
  */
 interface Validator
 {
-
     /**
      * Returns TRUE if input is valid according to the specified type after
      * canonicalization. The type parameter must be the name of a defined type
@@ -135,7 +130,7 @@ interface Validator
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function isValidCreditCard($context, $input, $allowNull);
-    
+
     /**
      * Returns TRUE if the canonicalized input is a valid directory path.
      *
@@ -152,7 +147,7 @@ interface Validator
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function isValidDirectoryPath($context, $input, $allowNull);
-    
+
     /**
      * Returns TRUE if the canonicalized input is a valid, real number within
      * the specified range minValue to maxValue.
@@ -212,7 +207,7 @@ interface Validator
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function isValidDouble($context, $input, $minValue, $maxValue, $allowNull);
- 
+
     /**
      * Returns TRUE if the canonicalized input exactly matches a list item.
      *
@@ -226,7 +221,7 @@ interface Validator
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function isValidListItem($context, $input, $list);
-    
+
     /**
      * Returns TRUE if the canonicalized input contains no more than the number
      * of valid printable ASCII characters specified.
@@ -246,7 +241,7 @@ interface Validator
      * @return bool TRUE if the input is valid, FALSE otherwise.
      */
     public function isValidPrintable($context, $input, $maxLength, $allowNull);
-    
+
     /**
      * Returns TRUE if input is a valid redirect location.
      *

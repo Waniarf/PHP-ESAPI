@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -34,8 +32,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -47,7 +43,6 @@
  */
 interface HTTPUtilities
 {
-
     /**
      * Adds the CSRF token from the current session to the supplied URL for the
      * purposes of preventing CSRF attacks. This method should be used on all URLs
@@ -64,7 +59,7 @@ interface HTTPUtilities
      * session then NULL is returned. If the CSRF Token is not present in the
      * session it will be created.
      *
-     * @return string|NULL CSRF token for the current session or
+     * @return string|null CSRF token for the current session or
      *                     NULL.
      */
     public function getCSRFToken();
@@ -92,7 +87,7 @@ interface HTTPUtilities
      * @param SafeRequest $request Request object.
      * @param string      $name    The name of the cookie to retreive.
      *
-     * @return string|NULL value of the requested cookie or
+     * @return string|null value of the requested cookie or
      *                     NULL if the specified cookie is not present.
      */
     public function getCookie($request, $name);
@@ -128,8 +123,8 @@ interface HTTPUtilities
      * more specific validation.
      *
      * @param SafeRequest $request Request object.
-     * @param string $name
-     * @param string $default An optional default value to return if parameter does not pass validation
+     * @param string      $name
+     * @param string      $default An optional default value to return if parameter does not pass validation
      *
      * @return the requested parameter value or $default if the named parameter does not pass validation
      */
@@ -191,7 +186,7 @@ interface HTTPUtilities
      *
      * @param SafeRequest $request           Current Request object.
      * @param Auditor     $auditor           The auditor to write the request to.
-     * @param array|NULL  $paramsToObfuscate The sensitive parameters.
+     * @param array|null  $paramsToObfuscate The sensitive parameters.
      */
     public function logHTTPRequestObfuscate($request, $auditor, $paramsToObfuscate);
 
@@ -273,7 +268,7 @@ interface HTTPUtilities
      */
     // public function encryptHiddenField($value);
 
-    /**
+    /*
      * Takes an HTTP query string (everything after the question mark in the
      * URL) and returns an encrypted string containing the parameters.
      *

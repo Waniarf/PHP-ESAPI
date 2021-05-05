@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -35,8 +33,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -49,7 +45,6 @@
  */
 interface ValidationRule
 {
-
     /**
      * Sets the allowNull property which, if set TRUE, will allow empty
      * inputs to validate as TRUE.

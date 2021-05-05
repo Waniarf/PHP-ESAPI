@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,14 +41,13 @@
  */
 class DateFormat
 {
+    private $_format = [];
 
-    private $_format = array();
-        
     const DATE_SMALL = 'SMALL';
     const DATE_MEDIUM = 'MEDIUM';
     const DATE_LONG = 'LONG';
     const DATE_FULL = 'FULL';
-    
+
     /**
      * Constructor.
      *
@@ -65,7 +60,7 @@ class DateFormat
     {
         $this->setformat($format, $type);
     }
-    
+
     /**
      * Helper function.
      *

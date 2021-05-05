@@ -11,7 +11,6 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  *
- *  @package ESAPI_Reference
  *
  *  @author Andrew van der Stock
  *  @created 2009
@@ -26,8 +25,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
  *
@@ -37,9 +34,10 @@
  */
 class RandomAccessReferenceMap implements AccessReferenceMap
 {
-    
     private $dtoi;
+
     private $itod;
+
     private $random = 0;
 
     public function __construct($directReferences = null)
@@ -78,13 +76,13 @@ class RandomAccessReferenceMap implements AccessReferenceMap
     public function getIndirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
 
         if (!($this->dtoi->offsetExists($hash))) {
-            return null;
+            return;
         }
 
         return $this->dtoi->offsetGet($hash);
@@ -109,9 +107,7 @@ class RandomAccessReferenceMap implements AccessReferenceMap
             return $this->itod->offsetGet($indirectReference);
         }
 
-        throw new AccessControlException("Access denied", "Request for invalid indirect reference: " + $indirectReference);
-
-        return null;
+        throw new AccessControlException('Access denied', 'Request for invalid indirect reference: ' + $indirectReference);
     }
 
     /**
@@ -125,7 +121,7 @@ class RandomAccessReferenceMap implements AccessReferenceMap
     public function addDirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
@@ -152,7 +148,7 @@ class RandomAccessReferenceMap implements AccessReferenceMap
         $candidate = null;
 
         do {
-            $candidate = ESAPI::getRandomizer()->getRandomString(6, "123456789");
+            $candidate = ESAPI::getRandomizer()->getRandomString(6, '123456789');
         } while ($this->itod->offsetExists($candidate));
 
         return $candidate;
@@ -161,7 +157,7 @@ class RandomAccessReferenceMap implements AccessReferenceMap
     public function getHash($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = hexdec(substr(md5(serialize($direct)), -7));
@@ -181,7 +177,7 @@ class RandomAccessReferenceMap implements AccessReferenceMap
     public function removeDirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
@@ -193,8 +189,6 @@ class RandomAccessReferenceMap implements AccessReferenceMap
 
             return $indirect;
         }
-
-        return null;
     }
 
     /**
@@ -223,13 +217,13 @@ class RandomAccessReferenceMap implements AccessReferenceMap
             $indirect = null;
             $direct = $directIterator->current();
             $hash = $this->getHash($direct);
-                
+
             // Try to get the old direct object reference (if it exists)
             // otherwise, create a new entry
             if (!empty($direct) && $dtoi_old->offsetExists($hash)) {
                 $indirect = $dtoi_old->offsetGet($hash);
             }
-                
+
             if (empty($indirect)) {
                 $indirect = $this->getUniqueRandomReference();
             }

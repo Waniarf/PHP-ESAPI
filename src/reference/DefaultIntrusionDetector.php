@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
@@ -43,8 +41,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    Jeff Williams <jeff.williams@aspectsecurity.com>
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
@@ -56,8 +52,8 @@
  */
 class DefaultIntrusionDetector implements IntrusionDetector
 {
-
     private $_auditor;
+
     private $_userEvents;
 
     /**
@@ -66,8 +62,7 @@ class DefaultIntrusionDetector implements IntrusionDetector
      */
     public function __construct()
     {
-        $this->_auditor = ESAPI::getAuditor('IntrusionDetector');
-        $this->_userEvents = array();
+        $this->_userEvents = [];
     }
 
     /**
@@ -97,6 +92,7 @@ class DefaultIntrusionDetector implements IntrusionDetector
 
         // add the exception, which may trigger a detector
         $eventName = get_class($exception);
+
         try {
             $this->_addSecurityEvent($eventName);
         } catch (IntrusionException $intrusionException) {
@@ -196,6 +192,7 @@ class DefaultIntrusionDetector implements IntrusionDetector
     {
         // if there is a threshold, then track this event
         $threshold = ESAPI::getSecurityConfiguration()->getQuota($eventName);
+
         if ($threshold === null) {
             return;
         }
@@ -203,13 +200,15 @@ class DefaultIntrusionDetector implements IntrusionDetector
         // determine the storage for events
         if (isset($_SESSION)) {
             if (! array_key_exists('ESAPI', $_SESSION)) {
-                $_SESSION['ESAPI'] = array();
+                $_SESSION['ESAPI'] = [];
             }
+
             if (! array_key_exists('IntrusionDetector', $_SESSION['ESAPI'])) {
-                $_SESSION['ESAPI']['IntrusionDetector'] = array();
+                $_SESSION['ESAPI']['IntrusionDetector'] = [];
             }
+
             if (! array_key_exists('UserEvents', $_SESSION['ESAPI']['IntrusionDetector'])) {
-                $_SESSION['ESAPI']['IntrusionDetector']['UserEvents'] = array();
+                $_SESSION['ESAPI']['IntrusionDetector']['UserEvents'] = [];
             }
             // If a session was started after events existed then ensure those
             // events are added to the session store
@@ -223,17 +222,20 @@ class DefaultIntrusionDetector implements IntrusionDetector
             $this->_userEvents = &
                 $_SESSION['ESAPI']['IntrusionDetector']['UserEvents'];
         } elseif (! isset($this->_userEvents)) {
-            $this->_userEvents = array();
+            $this->_userEvents = [];
         }
 
         $event = null;
+
         if (array_key_exists($eventName, $this->_userEvents)) {
             $event = $this->_userEvents[$eventName];
         }
+
         if ($event == null) {
             $this->_userEvents[$eventName] = new Event($eventName);
             $event = $this->_userEvents[$eventName];
         }
+
         if ($threshold->count > 0) {
             $event->increment($threshold->count, $threshold->interval);
         }

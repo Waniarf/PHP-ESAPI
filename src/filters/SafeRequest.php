@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Filters
- *
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -34,8 +32,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Filters
- *
  * @author    jah <jah@jahboite.co.uk>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -46,28 +42,27 @@
  */
 class SafeRequest
 {
-
     /*
      * Ascii character sets defining printable, non-alphanumeric characters
      * permitted in various HTTP request contexts.
      * ' !"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~'
      * tspecials: '()<>@,;:\"/[]?={}' +SP +HT
      */
-    const CHARS_HTTP_COOKIE_NAME  = '_';
+    const CHARS_HTTP_COOKIE_NAME = '_';
     const CHARS_HTTP_COOKIE_VALUE = '!"#$%&\'()*+-./:<=>?@[\]^_`{|}~';
-    const CHARS_HTTP_HEADER_NAME  = '-_';
+    const CHARS_HTTP_HEADER_NAME = '-_';
     const CHARS_HTTP_HEADER_VALUE = ' !"#$%&\'()*+,-./;:<=>?@[\]^_`{|}~';
     const CHARS_HTTP_QUERY_STRING = ' &()*+,-./;:=?_';
-    const CHARS_HTTP_HOSTNAME     = '-._';
-    const CHARS_HTTP_REMOTE_USER  = '!#$%&\'*+-.^_`|~';
-    const CHARS_HTTP_REQUEST_URI  = '!$%&\'()*+-,./:=@_~';
-    const CHARS_FILESYSTEM_PATH   = ' !#$%&\'()+,-./=@[\]^_`{}~';
-    const CHARS_NUMERIC           = '0123456789';
+    const CHARS_HTTP_HOSTNAME = '-._';
+    const CHARS_HTTP_REMOTE_USER = '!#$%&\'*+-.^_`|~';
+    const CHARS_HTTP_REQUEST_URI = '!$%&\'()*+-,./:=@_~';
+    const CHARS_FILESYSTEM_PATH = ' !#$%&\'()+,-./=@[\]^_`{}~';
+    const CHARS_NUMERIC = '0123456789';
     const CHARS_ALPHA = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     const ORD_TAB = 0x09;
 
-    const PATTERN_REQUEST_METHOD   = '^(GET|HEAD|POST|TRACE|OPTIONS)$';
+    const PATTERN_REQUEST_METHOD = '^(GET|HEAD|POST|TRACE|OPTIONS)$';
     const PATTERN_REQUEST_AUTHTYPE
         = '^([dD][iI][gG][eE][sS][tT]|[bB][aA][sS][iI][cC])$';
     const PATTERN_HOST_NAME
@@ -78,26 +73,45 @@ class SafeRequest
     private $_serverGlobals;
 
     private $_authType;
+
     private $_contentLength;
+
     private $_contentType;
+
     private $_headers;
+
     private $_pathInfo;
+
     private $_pathTranslated;
+
     private $_queryString;
+
     private $_remoteAddr;
+
     private $_remoteHost;
+
     private $_remoteUser;
+
     private $_method;
+
     private $_requestURI;
+
     private $_serverName;
+
     private $_serverPort;
+
     private $_protocol;
+
     private $_cookies;
+
     private $_parameterNames;
+
     private $_parameterMap;
 
     private $_validator;
+
     private $_encoder;
+
     private $_auditor;
 
     /**
@@ -110,25 +124,26 @@ class SafeRequest
      * TODO accept a string like: 'GET / HTTP/1.1\r\nHost:example.com\r\n\r\n'
      * TODO accept GET and REQUEST parameters.
      *
-     * @param NULL|array $options Array (optional) of HTTP Request elements.
+     * @param null|array $options Array (optional) of HTTP Request elements.
      */
     public function __construct($options = null)
     {
-        $codecs = array(
+        $codecs = [
             new HTMLEntityCodec,
-            new PercentCodec
-        );
-        $this->_encoder    = new DefaultEncoder($codecs);
-        $this->_auditor    = ESAPI::getAuditor('SafeRequest');
-        $this->_validator  = ESAPI::getValidator();
+            new PercentCodec,
+        ];
+        $this->_encoder = new DefaultEncoder($codecs);
+        $this->_validator = ESAPI::getValidator();
 
         if ($options !== null && is_array($options)) {
             if (array_key_exists('cookies', $options)) {
                 $this->_cookies = $this->_validateCookies($options['cookies']);
             }
+
             if (array_key_exists('headers', $options)) {
                 $this->_headers = $this->_validateHeaders($options['headers']);
             }
+
             if (array_key_exists('env', $options)) {
                 $this->_serverGlobals
                     = $this->_canonicalizeServerGlobals($options['env']);
@@ -161,17 +176,17 @@ class SafeRequest
     public function getAuthType()
     {
         $defaultValue = '';
-        
+
         if ($this->_authType !== null) {
             return $this->_authType;
-        } else {
-            $this->_authType = $defaultValue;
         }
+        $this->_authType = $defaultValue;
 
         $key = 'AUTH_TYPE';
         $pattern = self::PATTERN_REQUEST_AUTHTYPE;
-        $canon   = $this->getServerGlobal($key);
-        $authType  = null;
+        $canon = $this->getServerGlobal($key);
+        $authType = null;
+
         try {
             $authType = $this->_getIfValid(
                 'HTTP Request Auth Scheme validation',
@@ -184,7 +199,7 @@ class SafeRequest
         if ($authType !== null) {
             $this->_authType = $authType;
         }
-        
+
         return $this->_authType;
     }
 
@@ -197,19 +212,19 @@ class SafeRequest
     public function getContentLength()
     {
         $defaultValue = 0;
-        
+
         if ($this->_contentLength !== null) {
             return $this->_contentLength;
-        } else {
-            $this->_contentLength = $defaultValue;
         }
+        $this->_contentLength = $defaultValue;
 
-        $key   = 'CONTENT_LENGTH';
+        $key = 'CONTENT_LENGTH';
         $canon = $this->getServerGlobal($key);
         $isValid = $this->_validator->isValidInteger(
             'HTTP Request Content-Length validation',
             $canon, 0, PHP_INT_MAX, true
         );
+
         if ($isValid == true) {
             $this->_contentLength = (int) $canon;
         }
@@ -226,20 +241,20 @@ class SafeRequest
     public function getContentType()
     {
         $defaultValue = '';
-        
+
         if ($this->_contentType !== null) {
             return $this->_contentType;
-        } else {
-            $this->_contentType = $defaultValue;
         }
+        $this->_contentType = $defaultValue;
 
-        $key          = 'CONTENT_TYPE';
-        $c            = array(self::CHARS_HTTP_HEADER_VALUE);
-        $charset      = $this->_hexifyCharsForPattern($c);
-        $pattern      = "^[a-zA-Z0-9{$charset}]+$";
+        $key = 'CONTENT_TYPE';
+        $c = [self::CHARS_HTTP_HEADER_VALUE];
+        $charset = $this->_hexifyCharsForPattern($c);
+        $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon        = $this->getServerGlobal($key);
-        $contentType  = null;
+        $canon = $this->getServerGlobal($key);
+        $contentType = null;
+
         try {
             $contentType = $this->_getIfValid(
                 'HTTP Request Content Type validation',
@@ -252,7 +267,7 @@ class SafeRequest
         if ($contentType !== null) {
             $this->_contentType = $contentType;
         }
-        
+
         return $this->_contentType;
     }
 
@@ -265,20 +280,20 @@ class SafeRequest
     public function getPathInfo()
     {
         $defaultValue = '';
-        
+
         if ($this->_pathInfo !== null) {
             return $this->_pathInfo;
-        } else {
-            $this->_pathInfo = $defaultValue;
         }
+        $this->_pathInfo = $defaultValue;
 
-        $key      = 'PATH_INFO';
-        $c        = array(self::CHARS_HTTP_HEADER_VALUE);
-        $charset  = $this->_hexifyCharsForPattern($c);
-        $pattern  = "^[a-zA-Z0-9{$charset}]+$";
+        $key = 'PATH_INFO';
+        $c = [self::CHARS_HTTP_HEADER_VALUE];
+        $charset = $this->_hexifyCharsForPattern($c);
+        $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon    = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $pathInfo = null;
+
         try {
             $pathInfo = $this->_getIfValid(
                 'HTTP Request Path Info validation',
@@ -291,7 +306,7 @@ class SafeRequest
         if ($pathInfo !== null) {
             $this->_pathInfo = $pathInfo;
         }
-        
+
         return $this->_pathInfo;
     }
 
@@ -304,20 +319,20 @@ class SafeRequest
     public function getPathTranslated()
     {
         $defaultValue = '';
-        
+
         if ($this->_pathTranslated !== null) {
             return $this->_pathTranslated;
-        } else {
-            $this->_pathTranslated = $defaultValue;
         }
+        $this->_pathTranslated = $defaultValue;
 
-        $key      = 'PATH_TRANSLATED';
-        $c        = array(self::CHARS_FILESYSTEM_PATH);
-        $charset  = $this->_hexifyCharsForPattern($c);
-        $pattern  = "^[a-zA-Z0-9{$charset}]+$";
+        $key = 'PATH_TRANSLATED';
+        $c = [self::CHARS_FILESYSTEM_PATH];
+        $charset = $this->_hexifyCharsForPattern($c);
+        $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon          = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $pathTranslated = null;
+
         try {
             $pathTranslated = $this->_getIfValid(
                 'HTTP Request Path Translated validation',
@@ -343,20 +358,20 @@ class SafeRequest
     public function getQueryString()
     {
         $defaultValue = '';
-        
+
         if ($this->_queryString !== null) {
             return $this->_queryString;
-        } else {
-            $this->_queryString = $defaultValue;
         }
+        $this->_queryString = $defaultValue;
 
-        $key      = 'QUERY_STRING';
-        $c        = array(self::CHARS_HTTP_QUERY_STRING);
-        $charset  = $this->_hexifyCharsForPattern($c);
-        $pattern  = "^[a-zA-Z0-9{$charset}]+$";
+        $key = 'QUERY_STRING';
+        $c = [self::CHARS_HTTP_QUERY_STRING];
+        $charset = $this->_hexifyCharsForPattern($c);
+        $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon       = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $queryString = null;
+
         try {
             $queryString = $this->_getIfValid(
                 'HTTP Request Query String validation',
@@ -382,18 +397,18 @@ class SafeRequest
     public function getRemoteAddr()
     {
         $defaultValue = '';
-        
+
         if ($this->_remoteAddr !== null) {
             return $this->_remoteAddr;
-        } else {
-            $this->_remoteAddr = $defaultValue;
         }
+        $this->_remoteAddr = $defaultValue;
 
-        $key      = 'REMOTE_ADDR';
-        $pattern  = self::PATTERN_IPV4_ADDRESS;
+        $key = 'REMOTE_ADDR';
+        $pattern = self::PATTERN_IPV4_ADDRESS;
 
-        $canon      = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $remoteAddr = null;
+
         try {
             $remoteAddr = $this->_getIfValid(
                 'HTTP Request Remote Address validation',
@@ -419,18 +434,18 @@ class SafeRequest
     public function getRemoteHost()
     {
         $defaultValue = '';
-        
+
         if ($this->_remoteHost !== null) {
             return $this->_remoteHost;
-        } else {
-            $this->_remoteHost = $defaultValue;
         }
+        $this->_remoteHost = $defaultValue;
 
-        $key      = 'REMOTE_HOST';
-        $pattern  = self::PATTERN_HOST_NAME;
+        $key = 'REMOTE_HOST';
+        $pattern = self::PATTERN_HOST_NAME;
 
-        $canon      = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $remoteHost = null;
+
         try {
             $remoteHost = $this->_getIfValid(
                 'HTTP Request Remote Host FQDN validation',
@@ -456,20 +471,20 @@ class SafeRequest
     public function getRemoteUser()
     {
         $defaultValue = '';
-        
+
         if ($this->_remoteUser !== null) {
             return $this->_remoteUser;
-        } else {
-            $this->_remoteUser = $defaultValue;
         }
+        $this->_remoteUser = $defaultValue;
 
-        $key      = 'REMOTE_USER';
-        $c        = array(self::CHARS_HTTP_REMOTE_USER);
-        $charset  = $this->_hexifyCharsForPattern($c);
-        $pattern  = "^[a-zA-Z0-9{$charset}]+$";
+        $key = 'REMOTE_USER';
+        $c = [self::CHARS_HTTP_REMOTE_USER];
+        $charset = $this->_hexifyCharsForPattern($c);
+        $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon      = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $remoteUser = null;
+
         try {
             $remoteUser = $this->_getIfValid(
                 'HTTP Request Remote User validation',
@@ -495,18 +510,18 @@ class SafeRequest
     public function getMethod()
     {
         $defaultValue = '';
-        
+
         if ($this->_method !== null) {
             return $this->_method;
-        } else {
-            $this->_method = $defaultValue;
         }
+        $this->_method = $defaultValue;
 
-        $key     = 'REQUEST_METHOD';
+        $key = 'REQUEST_METHOD';
         $pattern = self::PATTERN_REQUEST_METHOD;
 
-        $canon  = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $method = null;
+
         try {
             $method = $this->_getIfValid(
                 'HTTP Request Method Validation',
@@ -515,6 +530,7 @@ class SafeRequest
         } catch (Exception $e) {
             // NoOp - already logged.
         }
+
         if ($method !== null) {
             $this->_method = $method;
         }
@@ -531,20 +547,20 @@ class SafeRequest
     public function getRequestURI()
     {
         $defaultValue = '';
-        
+
         if ($this->_requestURI !== null) {
             return $this->_requestURI;
-        } else {
-            $this->_requestURI = $defaultValue;
         }
+        $this->_requestURI = $defaultValue;
 
-        $key     = 'SCRIPT_NAME';
-        $c       = array(self::CHARS_HTTP_REQUEST_URI);
+        $key = 'SCRIPT_NAME';
+        $c = [self::CHARS_HTTP_REQUEST_URI];
         $charset = $this->_hexifyCharsForPattern($c);
         $pattern = "^[a-zA-Z0-9{$charset}]+$";
 
-        $canon  = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $path = null;
+
         try {
             $path = $this->_getIfValid(
                 'HTTP Request URI Validation',
@@ -553,6 +569,7 @@ class SafeRequest
         } catch (Exception $e) {
             // NoOp - already logged.
         }
+
         if ($path !== null) {
             $this->_requestURI = $path;
         }
@@ -569,22 +586,22 @@ class SafeRequest
     public function getServerName()
     {
         $defaultValue = '';
-        
+
         if ($this->_serverName !== null) {
             return $this->_serverName;
-        } else {
-            $this->_serverName = '';
         }
+        $this->_serverName = '';
 
-        $key      = 'SERVER_NAME';
-        $pattern  = '(';
+        $key = 'SERVER_NAME';
+        $pattern = '(';
         $pattern .= self::PATTERN_IPV4_ADDRESS;
         $pattern .= '|';
         $pattern .= self::PATTERN_HOST_NAME;
         $pattern .= ')';
 
-        $canon      = $this->getServerGlobal($key);
+        $canon = $this->getServerGlobal($key);
         $serverName = null;
+
         try {
             $serverName = $this->_getIfValid(
                 'HTTP Request Server Name validation',
@@ -610,19 +627,19 @@ class SafeRequest
     public function getServerPort()
     {
         $defaultValue = 0;
-        
+
         if ($this->_serverPort !== null) {
             return $this->_serverPort;
-        } else {
-            $this->_serverPort = $defaultValue;
         }
+        $this->_serverPort = $defaultValue;
 
-        $key        = 'SERVER_PORT';
-        $canon      = $this->getServerGlobal($key);
+        $key = 'SERVER_PORT';
+        $canon = $this->getServerGlobal($key);
         $isValid = $this->_validator->isValidInteger(
             'HTTP Request Server Port validation',
             $canon, 0, 65535, true
         );
+
         if ($isValid == true) {
             $this->_serverPort = (int) $canon;
         }
@@ -655,20 +672,21 @@ class SafeRequest
      *
      * @param string $key Name of the http header value to retreive.
      *
-     * @return NULL|string valid, canonicalised header value or NULL if it is not
+     * @return null|string valid, canonicalised header value or NULL if it is not
      *                     present in the header or was present, but invalid.
      */
     public function getHeader($key)
     {
         if (! is_string($key) || $key == '') {
-            return null;
+            return;
         }
+
         if ($this->_headers === null) {
             $this->getHeaders();
         }
 
         if (! array_key_exists($key, $this->_headers)) {
-            return null;
+            return;
         }
 
         return $this->_headers[$key];
@@ -695,20 +713,21 @@ class SafeRequest
      *
      * @param string $name Name of the cookie value to retreive.
      *
-     * @return NULL|string valid, canonicalised cookie value or NULL if it is not
+     * @return null|string valid, canonicalised cookie value or NULL if it is not
      *                     present in the header or was present, but invalid.
      */
     public function getCookie($name)
     {
         if (! is_string($name) || $name == '') {
-            return null;
+            return;
         }
+
         if ($this->_cookies === null) {
             $this->getCookies();
         }
 
         if (! array_key_exists($name, $this->_cookies)) {
-            return null;
+            return;
         }
 
         return $this->_cookies[$name];
@@ -720,13 +739,14 @@ class SafeRequest
      *
      * @param string $key Index name for a value in the $_SERVER array.
      *
-     * @return string|NULL Value of a $_SERVER variable or NULL.
+     * @return string|null Value of a $_SERVER variable or NULL.
      */
     public function getServerGlobal($key)
     {
         if (! is_string($key) || $key == '') {
-            return null;
+            return;
         }
+
         if ($this->_serverGlobals === null) {
             $this->_getServerGlobals();
         }
@@ -735,11 +755,10 @@ class SafeRequest
             return $this->_serverGlobals[$key];
         }
         $key = strtoupper($key);
+
         if (array_key_exists($key, $this->_serverGlobals)) {
             return $this->_serverGlobals[$key];
         }
-
-        return null;
     }
 
     /**
@@ -755,20 +774,23 @@ class SafeRequest
      *
      * @param string $name The name of a parameter to retreive.
      *
-     * @return string|NULL The first or only value of a parameter or NULL if the
+     * @return string|null The first or only value of a parameter or NULL if the
      *                     parameter is not present in the request.
      */
     public function getParameter($name)
     {
         if (! is_string($name) || empty($name)) {
-            return null;
+            return;
         }
+
         if ($this->_parameterMap === null) {
             $this->getParameterMap();
         }
+
         if (! array_key_exists($name, $this->_parameterMap)) {
-            return null;
+            return;
         }
+
         if (! is_array($this->_parameterMap[$name])) {
             return $this->_parameterMap[$name];
         }
@@ -787,10 +809,12 @@ class SafeRequest
         if ($this->_parameterNames !== null) {
             return $this->_parameterNames;
         }
+
         if ($this->_parameterMap === null) {
             $this->getParameterMap();
         }
-        $tmp = array();
+        $tmp = [];
+
         foreach ($this->_parameterMap as $name => $ignore) {
             $tmp[] = $name;
         }
@@ -807,20 +831,22 @@ class SafeRequest
      *
      * @param string $name The name of the parameter to retreive.
      *
-     * @return array|NULL Array of request parameter values asscoiated with the
+     * @return array|null Array of request parameter values asscoiated with the
      *                    supplied name or NULL if the parameter name was not found
      *                    in this request.
      */
     public function getParameterValues($name)
     {
         if (! is_string($name) || empty($name)) {
-            return null;
+            return;
         }
+
         if ($this->_parameterMap === null) {
             $this->getParameterMap();
         }
+
         if (! array_key_exists($name, $this->_parameterMap)) {
-            return null;
+            return;
         }
 
         return $this->_parameterMap[$name];
@@ -841,19 +867,21 @@ class SafeRequest
             return $this->_parameterMap;
         }
 
-        $tmp = array();
+        $tmp = [];
+
         foreach ($_POST as $unsafePname => $unsafePvalue) {
             try {
-                $canonName  = $this->_encoder->canonicalize($unsafePname);
+                $canonName = $this->_encoder->canonicalize($unsafePname);
                 $canonValue = $this->_encoder->canonicalize($unsafePvalue);
                 $tmp[$canonName][] = $canonValue;
             } catch (Exception $e) {
                 // NoOp
             }
         }
+
         foreach ($_GET as $unsafePname => $unsafePvalue) {
             try {
-                $canonName  = $this->_encoder->canonicalize($unsafePname);
+                $canonName = $this->_encoder->canonicalize($unsafePname);
                 $canonValue = $this->_encoder->canonicalize($unsafePvalue);
                 $tmp[$canonName][] = $canonValue;
             } catch (Exception $e) {
@@ -894,11 +922,13 @@ class SafeRequest
      */
     private function _canonicalizeServerGlobals($ary)
     {
-        $tmp = array();
+        $tmp = [];
+
         foreach ($ary as $unsafeKey => $unsafeVal) {
             if (! is_string($unsafeVal)) {
                 continue;
             }
+
             try {
                 $canonKey = $this->_encoder->canonicalize($unsafeKey);
                 $canonVal = $this->_encoder->canonicalize($unsafeVal);
@@ -925,21 +955,23 @@ class SafeRequest
      */
     private function _validateHeaders($ary)
     {
-        $charset = array(self::CHARS_HTTP_HEADER_NAME);
+        $charset = [self::CHARS_HTTP_HEADER_NAME];
         $keyCharset = $this->_hexifyCharsForPattern($charset);
         $ptnKey = "^[a-zA-Z0-9{$keyCharset}]+$";
 
-        $charset = array(self::CHARS_HTTP_HEADER_VALUE, self::ORD_TAB);
+        $charset = [self::CHARS_HTTP_HEADER_VALUE, self::ORD_TAB];
         $valCharset = $this->_hexifyCharsForPattern($charset);
         $ptnVal = "^[a-zA-Z0-9{$valCharset}]+$";
 
-        $tmp = array();
+        $tmp = [];
+
         foreach ($ary as $unvalidatedKey => $unvalidatedVal) {
             try {
                 $safeKey = $this->_getIfValid(
                     '$_SERVER Index', $unvalidatedKey, $ptnKey,
                     'HTTP Header Validator', PHP_INT_MAX, false
                 );
+
                 if (mb_substr($safeKey, 0, 5, 'ASCII') == 'HTTP_') {
                     $safeVal = $this->_getIfValid(
                         '$_SERVER HTTP_* Value', $unvalidatedVal, $ptnVal,
@@ -972,15 +1004,16 @@ class SafeRequest
             return $this->_cookies;
         }
 
-        $charset = array(self::CHARS_HTTP_COOKIE_NAME);
+        $charset = [self::CHARS_HTTP_COOKIE_NAME];
         $keyCharset = $this->_hexifyCharsForPattern($charset);
         $ptnKey = "^[a-zA-Z0-9{$keyCharset}]+$";
 
-        $charset = array(self::CHARS_HTTP_COOKIE_VALUE);
+        $charset = [self::CHARS_HTTP_COOKIE_VALUE];
         $valCharset = $this->_hexifyCharsForPattern($charset);
         $ptnVal = "^[a-zA-Z0-9{$valCharset}]+$";
 
-        $tmp = array();
+        $tmp = [];
+
         foreach ($ary as $unvalidatedKey => $unvalidatedVal) {
             try {
                 $safeKey = $this->_getIfValid(
@@ -1043,6 +1076,7 @@ class SafeRequest
     private function _hexifyCharsForPattern($charsets)
     {
         $s = '';
+
         foreach ($charsets as $set) {
             if ($set === (int) $set) {
                 $s .= chr($set);
@@ -1053,8 +1087,9 @@ class SafeRequest
 
         $hex = '';
         $limit = mb_strlen($s, 'ASCII');
+
         for ($i = 0; $i < $limit; $i++) {
-            list(, $ord) = unpack("C", mb_substr($s, $i, 1, 'ASCII'));
+            [, $ord] = unpack('C', mb_substr($s, $i, 1, 'ASCII'));
             $h = dechex($ord);
             $pad = mb_strlen($h, 'ASCII') == 1 ? '0' : '';
             $hex .= '\\x' . $pad . $h;

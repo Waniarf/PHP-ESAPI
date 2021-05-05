@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @copyright 2009-2010 The OWASP Foundation
@@ -34,8 +32,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @copyright 2009-2010 The OWASP Foundation
@@ -47,7 +43,6 @@
  */
 class ValidationErrorList
 {
-
     /**
      * Error list of ValidationException's.
      */

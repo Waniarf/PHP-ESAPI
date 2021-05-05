@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OWASP Enterprise Security API (ESAPI)
+ * OWASP Enterprise Security API (ESAPI).
  *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
@@ -53,7 +53,6 @@
  */
 interface Authenticator
 {
-
     /**
      * Clears the current User. This allows the thread to be reused safely.
      *
@@ -72,6 +71,7 @@ interface Authenticator
      * current user.
      *
      * Uses the current request and response if called without parameters.
+     *
      * @see HTTPUtilities::setCurrentHTTP($request, $response)
      *
      * Specification:  The implementation should do the following:
@@ -104,7 +104,7 @@ interface Authenticator
      * This method is typically used for "reauthentication" for the most sensitive functions, such
      * as transactions, changing email address, and changing other account information.
      *
-     * @param User $user The user who requires verification
+     * @param User   $user     The user who requires verification
      * @param string $password The hashed user-supplied password
      *
      * @return TRUE, if the password is correct for the specified user
@@ -115,7 +115,7 @@ interface Authenticator
      * Logs out the current user.
      *
      * This is usually done by calling User::logout on the current user.
-    */
+     */
     public function logout();
 
     /**
@@ -128,8 +128,8 @@ interface Authenticator
      * both are the same.
      *
      * @param string $accountName The account name of the new user
-     * @param string $password1 The password of the new user
-     * @param string $password2 The password of the new user.  This field is to encourage user interface designers to include two password fields in their forms.
+     * @param string $password1   The password of the new user
+     * @param string $password2   The password of the new user.  This field is to encourage user interface designers to include two password fields in their forms.
      *
      * @throws AuthenticationException If user creation fails due to any of the qualifications listed in this method's description
      *
@@ -147,7 +147,7 @@ interface Authenticator
      * username, fragments of the old password, and other information that could be used to weaken the strength of the
      * password.
      *
-     * @param User $user The user whose information to use when generating password
+     * @param User   $user        The user whose information to use when generating password
      * @param string $oldPassword The old password to use when verifying strength of new password. The new password may
      *                            be checked for fragments of oldPassword.
      *
@@ -160,10 +160,10 @@ interface Authenticator
      * the password to replace it with. The new password should be checked against old hashes to be sure the new password does not closely resemble or equal any recent passwords for that User.
      * Password strength should also be verified.  This new password must be repeated to ensure that the user has typed it in correctly.
      *
-     * @param User $user The user to change the password for
+     * @param User   $user            The user to change the password for
      * @param string $currentPassword The current password for the specified user
-     * @param string $newPassword The new password to use
-     * @param string $newPassword2 A verification copy of the new password
+     * @param string $newPassword     The new password to use
+     * @param string $newPassword2    A verification copy of the new password
      *
      * @throws AuthenticationException If any errors occur
      */
@@ -193,7 +193,7 @@ interface Authenticator
      * Gets a collection containing all the existing user names.
      *
      * @return array A set of all user names
-    */
+     */
     public function getUserNames();
 
     /**
@@ -218,7 +218,7 @@ interface Authenticator
      * value. The Encryptor.hash method can be used if a different salt is
      * required.
      *
-     * @param string $password The password to hash
+     * @param string $password    The password to hash
      * @param string $accountName The account name to use as the salt
      *
      * @return The hashed password
@@ -253,7 +253,7 @@ interface Authenticator
      *
      * @param string $oldPassword The old password
      * @param string $newPassword The new password
-     * @param User $user The user
+     * @param User   $user        The user
      *
      * @throws AuthenticationException If newPassword is too similar to oldPassword or if newPassword does not meet complexity requirements
      */

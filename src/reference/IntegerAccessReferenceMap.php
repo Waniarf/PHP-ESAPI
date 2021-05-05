@@ -15,16 +15,12 @@
  * @created 2009
  *
  * @since 1.6
- *
- * @package ESAPI_Reference
  */
 
 /**
  * Reference Implementation of the IntegerAccessReferenceMap interface.
  *
  * @category  OWASP
- *
- * @package   ESAPI_Reference
  *
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -35,9 +31,10 @@
  */
 class IntegerAccessReferenceMap implements AccessReferenceMap
 {
-
     private $dtoi;
+
     private $itod;
+
     private $count = 1;
 
     public function __construct($directReferences = null)
@@ -51,7 +48,7 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function iterator()
     {
@@ -59,25 +56,25 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
 
         if (!($this->dtoi->offsetExists($hash))) {
-            return null;
+            return;
         }
 
         return $this->dtoi->offsetGet($hash);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDirectReference($indirectReference)
     {
@@ -85,18 +82,16 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
             return $this->itod->offsetGet($indirectReference);
         }
 
-        throw new AccessControlException("Access denied", "Request for invalid indirect reference: " + $indirectReference);
-
-        return null;
+        throw new AccessControlException('Access denied', 'Request for invalid indirect reference: ' + $indirectReference);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addDirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
@@ -126,12 +121,12 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
     /**
      * @param unknown $direct
      *
-     * @return NULL|number
+     * @return null|number
      */
     public function getHash($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = hexdec(substr(md5(serialize($direct)), -7));
@@ -140,12 +135,12 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function removeDirectReference($direct)
     {
         if (empty($direct)) {
-            return null;
+            return;
         }
 
         $hash = $this->getHash($direct);
@@ -157,12 +152,10 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
 
             return $indirect;
         }
-
-        return null;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function update($directReferences)
     {
@@ -181,13 +174,13 @@ class IntegerAccessReferenceMap implements AccessReferenceMap
             $indirect = null;
             $direct = $directIterator->current();
             $hash = $this->getHash($direct);
-            
+
             // Try to get the old direct object reference (if it exists)
             // otherwise, create a new entry
             if (!empty($direct) && $dtoi_old->offsetExists($hash)) {
                 $indirect = $dtoi_old->offsetGet($hash);
             }
-            
+
             if (empty($indirect)) {
                 $indirect = $this->getUniqueReference();
             }

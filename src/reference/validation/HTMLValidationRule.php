@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @author    jah <jah@jahboite.co.uk>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Johannes B. Ullrich <jullrich@sans.edu>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,7 +41,6 @@
  */
 class HTMLValidationRule extends StringValidationRule
 {
-
     // TODO : configuration of htmlpurifier and logging
     //
     // // replace with your encoding
@@ -56,6 +51,7 @@ class HTMLValidationRule extends StringValidationRule
     //
     //
     private $_auditor;
+
     private $_purifier;
 
     /**
@@ -75,7 +71,6 @@ class HTMLValidationRule extends StringValidationRule
     {
         parent::__construct($typeName, $encoder);
 
-        $this->_auditor = ESAPI::getAuditor('HTMLValidationRule');
         try {
             $this->_purifier = new HTMLPurifier($this->_basicConfig());
         } catch (Exception $e) {
@@ -99,7 +94,7 @@ class HTMLValidationRule extends StringValidationRule
      */
     private function _basicConfig()
     {
-        $a = array();
+        $a = [];
         $a['Core.Encoding'] = 'UTF-8';
         $a['HTML.Doctype'] = 'XHTML 1.0 Transitional';
         $a['HTML.ForbiddenAttributes'] = 'body@onload';
@@ -129,6 +124,7 @@ class HTMLValidationRule extends StringValidationRule
         $canonical = parent::getValid($context, $input);
 
         $clean_html = null;
+
         try {
             $clean_html = $this->_purifier->purify($canonical);
         } catch (Exception $e) {
@@ -145,8 +141,10 @@ class HTMLValidationRule extends StringValidationRule
         // input and the output don't match then the input wasn't valid.
         $numErrors = 0;
         $errors = $this->_purifier->context->get('ErrorCollector');
+
         if ($errors instanceof HTMLPurifier_ErrorCollector) {
             $numErrors = sizeof($errors->getRaw(), false);
+
             if ($numErrors > 0) {
                 throw new ValidationException(
                     'HTML Input is not valid.',
@@ -182,6 +180,7 @@ class HTMLValidationRule extends StringValidationRule
     public function sanitize($context, $input)
     {
         $clean_html = null;
+
         try {
             $clean_html = $this->_purifier->purify($input);
         } catch (Exception $e) {

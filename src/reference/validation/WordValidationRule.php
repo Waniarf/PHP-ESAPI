@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -29,8 +27,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference_Validation
- *
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
  * @license   http://www.opensource.org/licenses/bsd-license.php New BSD license
@@ -41,9 +37,8 @@
  */
 class WordValidationRule extends StringValidationRule
 {
-    
     private $_auditor;
- 
+
     /**
      * Constructor sets-up the validation rule with a descriptive name for this
      * validator, an optional Encoder instance (for canonicalization) and an
@@ -60,8 +55,6 @@ class WordValidationRule extends StringValidationRule
     public function __construct($typeName, $encoder = null, $whitelistPattern = null)
     {
         parent::__construct($typeName, $encoder);
-
-        $this->_auditor = ESAPI::getAuditor("WordValidationRule");
     }
 
     /**
@@ -104,16 +97,16 @@ class WordValidationRule extends StringValidationRule
     public function sanitize($context, $input)
     {
         if (count($input) != 2) {
-            return "";
+            return '';
         }
-        
+
         $unsanitized = $input[0];
         $guess = $input[1];
-        
+
         if (strcmp(metaphone($unsanitized), metaphone($guess)) == 0) {
             return $guess;
-        } else {
-            return "";
         }
+
+        return '';
     }
 }

@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -30,8 +28,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -43,7 +39,6 @@
  */
 class VBScriptCodec extends Codec
 {
-
     /**
      * Public Constructor.
      */
@@ -51,7 +46,7 @@ class VBScriptCodec extends Codec
     {
         parent::__construct();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -60,48 +55,49 @@ class VBScriptCodec extends Codec
         //detect encoding, special-handling for chr(172) and chr(128) to chr(159)
         //which fail to be detected by mb_detect_encoding()
         $initialEncoding = $this->detectEncoding($c);
-        
+
         // Normalize encoding to UTF-32
         $_4ByteUnencodedOutput = $this->normalizeEncoding($c);
-        
+
         // Start with nothing; format it to match the encoding of the string passed
         //as an argument.
-        $encodedOutput = mb_convert_encoding("", $initialEncoding);
-        
+        $encodedOutput = mb_convert_encoding('', $initialEncoding);
+
         // Grab the 4 byte character.
         $_4ByteCharacter = $this->forceToSingleCharacter($_4ByteUnencodedOutput);
-        
+
         // Get the ordinal value of the character.
-        list(, $ordinalValue) = unpack("N", $_4ByteCharacter);
-        
+        [, $ordinalValue] = unpack('N', $_4ByteCharacter);
+
         // check for immune characters
         foreach ($immune as $immuneCharacter) {
             // Convert to UTF-32 (4 byte characters, regardless of actual number of
             //bytes in the character).
             $_4ByteImmuneCharacter = $this->normalizeEncoding($immuneCharacter);
-            
+
             // Ensure it's a single 4 byte character (since $immune is an array of
             //strings) by grabbing only the 1st multi-byte character.
             $_4ByteImmuneCharacter = $this->forceToSingleCharacter(
                 $_4ByteImmuneCharacter
             );
-            
+
             // If the character is immune then return it.
             if ($_4ByteCharacter === $_4ByteImmuneCharacter) {
                 return $encodedOutput . chr($ordinalValue);
             }
         }
-        
+
         // Check for alphanumeric characters
         $hex = $this->getHexForNonAlphanumeric($_4ByteCharacter);
+
         if ($hex === null) {
             //character is alphanumric, therefore return the character...
             return $encodedOutput . chr($ordinalValue);
         }
-        
-        return $encodedOutput . "\"" . $c;
+
+        return $encodedOutput . '"' . $c;
     }
-    
+
     /**
      * {@inheritdoc}
      *
@@ -113,34 +109,35 @@ class VBScriptCodec extends Codec
     {
         // Assumption/prerequisite: $c is a UTF-32 encoded string
         $_4ByteEncodedInput = $input;
-        
-        if (mb_substr($_4ByteEncodedInput, 0, 1, "UTF-32") === null) {
+
+        if (mb_substr($_4ByteEncodedInput, 0, 1, 'UTF-32') === null) {
             // 1st character is null, so return null
             // eat the 1st character off the string and return null
             $_4ByteEncodedInput = mb_substr(
-                $input, 1, mb_strlen($_4ByteEncodedInput, "UTF-32"), "UTF-32"
+                $input, 1, mb_strlen($_4ByteEncodedInput, 'UTF-32'), 'UTF-32'
             ); //no point in doing this
-            return array(
+
+            return [
                 'decodedCharacter' => null,
-                'encodedString' => null
-            );
+                'encodedString' => null,
+            ];
         }
-        
+
         // if this is not an encoded character, return null
-        if (mb_substr($_4ByteEncodedInput, 0, 1, "UTF-32") != $this->normalizeEncoding('"')) {
+        if (mb_substr($_4ByteEncodedInput, 0, 1, 'UTF-32') != $this->normalizeEncoding('"')) {
             // 1st character is not part of encoding pattern, so return null
-            return array(
+            return [
                 'decodedCharacter' => null,
-                'encodedString' => null
-            );
+                'encodedString' => null,
+            ];
         }
-        
+
         // 1st character is part of encoding pattern...
-        $second = mb_substr($_4ByteEncodedInput, 1, 1, "UTF-32");
-        
-        return array(
+        $second = mb_substr($_4ByteEncodedInput, 1, 1, 'UTF-32');
+
+        return [
             'decodedCharacter' => $second,
-            'encodedString' => mb_substr($input, 0, 2, "UTF-32")
-        );
+            'encodedString' => mb_substr($input, 0, 2, 'UTF-32'),
+        ];
     }
 }

@@ -11,8 +11,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
  * @copyright 2009-2010 The OWASP Foundation
@@ -28,8 +26,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Reference
- *
  * @version   1.0
  *
  * @author    jah <jah@jahboite.co.uk>
@@ -40,7 +36,6 @@
  */
 class DefaultSanitizer implements Sanitizer
 {
-
     private $encoder;
 
     public function __construct()
@@ -107,7 +102,7 @@ class DefaultSanitizer implements Sanitizer
 
         return $uvr->sanitize($context, $input);
     }
-    
+
     /**
      * Returns valid, "safe" English language word based on the provided guess.
      *
@@ -122,7 +117,7 @@ class DefaultSanitizer implements Sanitizer
     public function getSanitizedWord($context, $input)
     {
         $wvr = new WordValidationRule('Word_Validator', $this->encoder);
-        
+
         return $wvr->sanitize($context, $input);
     }
 }

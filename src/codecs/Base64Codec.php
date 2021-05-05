@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Martin Reiche <martin.reiche.ka@gmail.com>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -31,8 +29,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI_Codecs
- *
  * @author    Martin Reiche <martin.reiche.ka@gmail.com>
  * @author    jah <jah@jahboite.co.uk>
  * @author    Mike Boberski <boberski_michael@bah.com>
@@ -45,15 +41,13 @@
  */
 class Base64Codec extends Codec
 {
-
     /**
      * Public Constructor.
      */
     public function __construct()
     {
-        $logger = ESAPI::getAuditor("Base64");
     }
-    
+
     /**
      * Encodes the input string to Base64.
      *
@@ -69,16 +63,16 @@ class Base64Codec extends Codec
     public function encode($input, $wrap = true)
     {
         $encoded = base64_encode($input);
-        
+
         if ($wrap === false) {
             return $encoded;
         }
-        
+
         // wrap encoded string into lines of not more than 76 characters
         $detectedCharacterEncoding = Codec::detectEncoding($encoded);
-        $wrapped                   = '';
-        $limit                     = mb_strlen($encoded, $detectedCharacterEncoding);
-        $index                     = 0;
+        $wrapped = '';
+        $limit = mb_strlen($encoded, $detectedCharacterEncoding);
+        $index = 0;
         while ($index < $limit) {
             if ($wrapped != '') {
                 $wrapped .= "\r\n";
@@ -86,25 +80,29 @@ class Base64Codec extends Codec
             $wrapped .= mb_substr($encoded, $index, 76);
             $index += 76;
         }
-        
+
         return $wrapped;
     }
-    
+
     /**
      * Encodes a single character to Base64.
      *
-     * @param string $input The character to encode
+     * @param string $immune: not used, but needs to be here to be compatible with Codec::encodeCharacter
+     * @param string $input   the character to encode
      *
      * @return string the base64 encoded character
      */
-    public function encodeCharacter($input)
+    public function encodeCharacter($immune = '', $c)
     {
-        $detectedCharacterEncoding = Codec::detectEncoding($input);
-        $c = mb_substr($input, 0, 1, $detectedCharacterEncoding);
-        
+        $detectedCharacterEncoding = Codec::detectEncoding($c);
+        $c = mb_substr(
+            $c, 0, 1,
+            $detectedCharacterEncoding
+        );
+
         return $this->encode($c, false);
     }
-    
+
     /**
      * Decodes the given input string from Base64 to plain text.
      *
@@ -116,7 +114,7 @@ class Base64Codec extends Codec
     {
         return base64_decode($input);
     }
-    
+
     /**
      * Decodes a character from Base64 to plain text.
      *

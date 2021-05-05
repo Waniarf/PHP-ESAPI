@@ -13,8 +13,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Martin Reiche <martin.reiche.ka@googlemail.com>
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
@@ -38,8 +36,6 @@
  *
  * @category  OWASP
  *
- * @package   ESAPI
- *
  * @author    Andrew van der Stock <vanderaj@owasp.org>
  * @author    Martin Reiche <martin.reiche.ka@googlemail.com>
  * @author    Arnaud Labenne <arnaud.labenne@dotsafe.fr>
@@ -53,10 +49,11 @@
  */
 class SafeFile extends SplFileObject
 {
+    private $_PERCENTS_PAT = '/(%)([0-9a-f])([0-9a-f])/i';
 
-    private $_PERCENTS_PAT = "/(%)([0-9a-f])([0-9a-f])/i";
-    private $_FILE_BLACKLIST_PAT = "/([\\/:*?<>|])/";
-    private $_DIR_BLACKLIST_PAT = "/([*?<>|])/";
+    private $_FILE_BLACKLIST_PAT = '/([\\/:*?<>|])/';
+
+    private $_DIR_BLACKLIST_PAT = '/([*?<>|])/';
 
     /**
      * Creates an extended SplFileObject from the given filename, which
@@ -93,7 +90,7 @@ class SafeFile extends SplFileObject
     private function _doDirCheck($path)
     {
         $dir = $this->getPath();
-        
+
         if (preg_match($this->_DIR_BLACKLIST_PAT, $dir)) {
             throw new ValidationException(
                 'Invalid directory',
@@ -109,6 +106,7 @@ class SafeFile extends SplFileObject
         }
 
         $ch = $this->_containsUnprintableCharacters($path);
+
         if ($ch != -1) {
             throw new ValidationException(
                 'Invalid directory',
@@ -176,6 +174,7 @@ class SafeFile extends SplFileObject
         }
 
         $ch = $this->_containsUnprintableCharacters($filename);
+
         if ($ch != -1) {
             throw new ValidationException(
                 'Invalid file',
@@ -196,6 +195,7 @@ class SafeFile extends SplFileObject
     {
         for ($i = 0; $i < strlen($s); $i++) {
             $ch = $s[$i];
+
             if (ord($ch) < 32 || ord($ch) > 126) {
                 return $ch;
             }
@@ -215,6 +215,7 @@ class SafeFile extends SplFileObject
     private function _doExtraCheck($path)
     {
         $last = substr($path, -1);
+
         if ($last === '/') {
             throw new ValidationException(
                 'Invalid file',
